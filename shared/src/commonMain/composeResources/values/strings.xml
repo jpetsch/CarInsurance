@@ -3,4 +3,8 @@
     <string name="search_term_label">Fahrzeug suchen</string>
     <string name="year_label">Erste Inverkehrssetzung (Jahr)</string>
     <string name="year_error">Bitte gib ein gültiges Jahr ein.</string>
+    <string name="search_network_error">Netzwerkfehler. Bitte überprüfe deine Verbindung.</string>
+    <string name="search_request_error">Die Suchanfrage konnte nicht verarbeitet werden.</string>
+    <string name="search_server_error">Der Suchdienst ist derzeit nicht verfügbar.</string>
+    <string name="search_invalid_response_error">Der Suchdienst hat eine ungültige Antwort geliefert.</string>
 </resources>

@@ -27,15 +27,15 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun SearchDropdown(
     searchTerm: String,
-    cars: List<Car>,
+    carGroups: Map<String, List<Car>>,
     onSearchTermChanged: (String) -> Unit,
-    onItemClicked: (Car) -> Unit,
+    onItemClicked: (Map.Entry<String, List<Car>>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var expanded by remember { mutableStateOf(cars.isNotEmpty()) }
+    var expanded by remember { mutableStateOf(carGroups.isNotEmpty()) }
 
-    LaunchedEffect(searchTerm, cars) {
-        expanded = cars.isNotEmpty()
+    LaunchedEffect(searchTerm, carGroups) {
+        expanded = carGroups.isNotEmpty()
     }
 
     ExposedDropdownMenuBox(
@@ -57,12 +57,12 @@ fun SearchDropdown(
             onDismissRequest = { expanded = false },
             modifier = Modifier.heightIn(max = 250.dp),
         ) {
-            cars.forEachIndexed { index, car ->
+            carGroups.entries.forEachIndexed { index, carGroup ->
                 DropdownMenuItem(
-                    text = { Text(text = "${car.brand} ${car.model}") },
-                    onClick = { onItemClicked(car) },
+                    text = { Text(text = carGroup.key) },
+                    onClick = { onItemClicked(carGroup) },
                 )
-                if (index < cars.lastIndex) {
+                if (index < carGroups.size - 1) {
                     HorizontalDivider()
                 }
             }

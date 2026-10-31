@@ -38,6 +38,7 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.compose.uiTooling)
+            implementation(libs.ktor.client.android)
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)
@@ -56,6 +57,13 @@ kotlin {
             implementation(libs.koin.compose.viewmodel)
 
             implementation(libs.kotlinx.serialization.json)
+
+            implementation(libs.ktor.core)
+            implementation(libs.ktor.content.negotiation)
+            implementation(libs.ktor.serialization)
+        }
+        iosMain.dependencies {
+            implementation(libs.ktor.client.ios)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)

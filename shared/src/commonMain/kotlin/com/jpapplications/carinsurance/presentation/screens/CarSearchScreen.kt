@@ -16,8 +16,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import carinsurance.shared.generated.resources.Res
+import carinsurance.shared.generated.resources.search_invalid_response_error
+import carinsurance.shared.generated.resources.search_network_error
+import carinsurance.shared.generated.resources.search_request_error
+import carinsurance.shared.generated.resources.search_server_error
 import carinsurance.shared.generated.resources.year_error
 import carinsurance.shared.generated.resources.year_label
+import com.jpapplications.carinsurance.domain.model.CarSearchError
 import com.jpapplications.carinsurance.presentation.components.SearchDropdown
 import org.jetbrains.compose.resources.stringResource
 
@@ -58,7 +63,7 @@ fun CarSearchScreen(
 
         SearchDropdown(
             searchTerm = uiState.searchTerm,
-            cars = uiState.cars,
+            carGroups = uiState.carGroups,
             onSearchTermChanged = {
                 onEvent(CarSearchViewModel.CarSearchEvent.SearchTermChanged(it))
             },

@@ -21,5 +21,5 @@ data class CarSearchDto(
     val fuel: String,
     val brand: String,
     val model: String,
-    val eMobility: Boolean,
+    val eMobility: Boolean = false,
 )

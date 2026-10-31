@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -62,6 +63,13 @@ fun CarSearchScreen(
             label = { Text(stringResource(Res.string.search_term_label)) },
             singleLine = true,
         )
+
+        LazyColumn {
+            items(uiState.cars.size) { index ->
+                val car = uiState.cars[index]
+                Text(text = "${car.brand} ${car.model}")
+            }
+        }
     }
 }
 

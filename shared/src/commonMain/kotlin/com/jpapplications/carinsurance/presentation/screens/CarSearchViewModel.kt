@@ -1,12 +1,19 @@
 package com.jpapplications.carinsurance.presentation.screens
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.jpapplications.carinsurance.domain.model.Car
+import com.jpapplications.carinsurance.domain.model.CarSearchCriteria
+import com.jpapplications.carinsurance.domain.usecase.SearchCarsUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
-class CarSearchViewModel : ViewModel() {
+class CarSearchViewModel(
+    private val searchCarsUseCase: SearchCarsUseCase,
+) : ViewModel() {
     private val _uiState = MutableStateFlow(CarSearchUiState())
     val uiState: StateFlow<CarSearchUiState> = _uiState.asStateFlow()
 
@@ -33,28 +40,38 @@ class CarSearchViewModel : ViewModel() {
                 searchTerm = searchTerm,
             )
         }
+
+        viewModelScope.launch {
+            val result = searchCarsUseCase(
+                criteria =
+                    // TODO CarSearchCriteria could cause an IllegalArgument right now with wrong year input
+                    CarSearchCriteria(
+                        searchTerm = searchTerm,
+                        year = uiState.value.year.toIntOrNull(),
+                    ),
+            )
+            _uiState.update { currentState ->
+                currentState.copy(
+                    cars = result,
+                )
+            }
+        }
     }
 
     private fun onYearChanged(year: String) {
+        val parsedYear = year.toIntOrNull()
         _uiState.update { currentState ->
             currentState.copy(
                 year = year,
-                hasYearError = validateYearInput(year),
+                hasYearError = parsedYear == null || !CarSearchCriteria.isValidYear(parsedYear),
             )
         }
-    }
-
-    private fun validateYearInput(yearString: String): Boolean {
-        if (yearString.any { !it.isDigit() }) {
-            return false
-        }
-        val year = yearString.toInt()
-        return year !in 2033 downTo 1975
     }
 }
 
 data class CarSearchUiState(
     val searchTerm: String = "",
-    val year: String = "", // TODO Bei übergabe an domain in Int umwandeln?
+    val year: String = "",
     val hasYearError: Boolean = false,
+    val cars: List<Car> = emptyList(),
 )

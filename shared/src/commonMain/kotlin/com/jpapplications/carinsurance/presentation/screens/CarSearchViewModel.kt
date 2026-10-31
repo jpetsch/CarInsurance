@@ -8,6 +8,7 @@ import com.jpapplications.carinsurance.domain.model.CarSearchError
 import com.jpapplications.carinsurance.domain.model.CarSearchResult
 import com.jpapplications.carinsurance.domain.usecase.SearchCarsUseCase
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -78,6 +79,8 @@ class CarSearchViewModel(
 
         val year = uiState.value.year.toIntOrNull()
         searchJob = viewModelScope.launch {
+            delay(SEARCH_DEBOUNCE_MILLIS)
+
             val result = searchCarsUseCase(
                 criteria =
                     CarSearchCriteria(
@@ -104,6 +107,10 @@ class CarSearchViewModel(
                 }
             }
         }
+    }
+
+    private companion object {
+        const val SEARCH_DEBOUNCE_MILLIS = 500L
     }
 }
 

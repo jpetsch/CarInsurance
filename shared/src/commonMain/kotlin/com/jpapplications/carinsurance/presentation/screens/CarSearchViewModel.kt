@@ -25,12 +25,17 @@ class CarSearchViewModel(
         data class YearChanged(
             val year: String,
         ) : CarSearchEvent
+
+        data class CarSelected(
+            val car: Car,
+        ) : CarSearchEvent
     }
 
     fun onEvent(event: CarSearchEvent) {
         when (event) {
             is CarSearchEvent.SearchTermChanged -> onSearchTermChanged(event.searchTerm)
             is CarSearchEvent.YearChanged -> onYearChanged(event.year)
+            is CarSearchEvent.CarSelected -> onCarSelected(event.car)
         }
     }
 
@@ -65,6 +70,10 @@ class CarSearchViewModel(
                 hasYearError = parsedYear == null || !CarSearchCriteria.isValidYear(parsedYear),
             )
         }
+    }
+
+    private fun onCarSelected(car: Car) {
+        // TODO Implement Car Selection
     }
 }
 

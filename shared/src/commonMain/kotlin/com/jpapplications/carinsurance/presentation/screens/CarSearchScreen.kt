@@ -62,6 +62,9 @@ fun CarSearchScreen(
             onSearchTermChanged = {
                 onEvent(CarSearchViewModel.CarSearchEvent.SearchTermChanged(it))
             },
+            onItemClicked = {
+                onEvent(CarSearchViewModel.CarSearchEvent.CarSelected(it))
+            }
         )
     }
 }

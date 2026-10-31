@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -17,9 +16,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import carinsurance.shared.generated.resources.Res
-import carinsurance.shared.generated.resources.search_term_label
 import carinsurance.shared.generated.resources.year_error
 import carinsurance.shared.generated.resources.year_label
+import com.jpapplications.carinsurance.presentation.components.SearchDropdown
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -57,19 +56,13 @@ fun CarSearchScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        OutlinedTextField(
-            value = uiState.searchTerm,
-            onValueChange = { onEvent(CarSearchViewModel.CarSearchEvent.SearchTermChanged(it)) },
-            label = { Text(stringResource(Res.string.search_term_label)) },
-            singleLine = true,
+        SearchDropdown(
+            searchTerm = uiState.searchTerm,
+            cars = uiState.cars,
+            onSearchTermChanged = {
+                onEvent(CarSearchViewModel.CarSearchEvent.SearchTermChanged(it))
+            },
         )
-
-        LazyColumn {
-            items(uiState.cars.size) { index ->
-                val car = uiState.cars[index]
-                Text(text = "${car.brand} ${car.model}")
-            }
-        }
     }
 }
 

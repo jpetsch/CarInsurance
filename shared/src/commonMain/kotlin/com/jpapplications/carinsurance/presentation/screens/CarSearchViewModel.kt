@@ -44,7 +44,6 @@ class CarSearchViewModel(
         viewModelScope.launch {
             val result = searchCarsUseCase(
                 criteria =
-                    // TODO CarSearchCriteria could cause an IllegalArgument right now with wrong year input
                     CarSearchCriteria(
                         searchTerm = searchTerm,
                         year = uiState.value.year.toIntOrNull(),

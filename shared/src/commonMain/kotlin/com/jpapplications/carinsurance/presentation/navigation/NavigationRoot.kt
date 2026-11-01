@@ -7,6 +7,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -18,12 +19,16 @@ import androidx.savedstate.serialization.SavedStateConfiguration
 import carinsurance.shared.generated.resources.Res
 import org.jetbrains.compose.resources.stringResource
 import carinsurance.shared.generated.resources.app_name
-import com.jpapplications.carinsurance.presentation.screens.CarSearchScreen
-import com.jpapplications.carinsurance.presentation.screens.CarSearchViewModel
+import com.jpapplications.carinsurance.presentation.screens.carSearch.CarSearchScreen
+import com.jpapplications.carinsurance.presentation.screens.carSearch.CarSearchViewModel
+import com.jpapplications.carinsurance.presentation.screens.driverInformation.DriverInformationScreen
+import com.jpapplications.carinsurance.presentation.screens.driverInformation.DriverInformationViewModel
+import io.ktor.http.parametersOf
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.modules.SerializersModule
 import kotlinx.serialization.modules.polymorphic
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @OptIn(ExperimentalSerializationApi::class)
 @Composable
@@ -71,7 +76,26 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
                         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
                         val onEvent = viewModel::onEvent
 
+                        LaunchedEffect(Unit) {
+                            viewModel.carModelSelected.collect {
+                                backStack.add(Route.DriverInformation(it))
+                            }
+                        }
+
                         CarSearchScreen(
+                            uiState = uiState,
+                            onEvent = onEvent,
+                        )
+                    }
+
+                    entry<Route.DriverInformation> {
+                        val viewModel: DriverInformationViewModel = koinViewModel(
+                            parameters = { parametersOf(it.etxCode) }
+                        )
+                        val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+                        val onEvent = viewModel::onEvent
+
+                        DriverInformationScreen(
                             uiState = uiState,
                             onEvent = onEvent,
                         )

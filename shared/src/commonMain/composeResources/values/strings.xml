@@ -7,4 +7,12 @@
     <string name="search_request_error">Die Suchanfrage konnte nicht verarbeitet werden.</string>
     <string name="search_server_error">Der Suchdienst ist derzeit nicht verfügbar.</string>
     <string name="search_invalid_response_error">Der Suchdienst hat eine ungültige Antwort geliefert.</string>
+    <string name="car_construction_type">Karosserie</string>
+    <string name="car_power">Leistung</string>
+    <string name="car_fuel">Kraftstoff</string>
+    <string name="car_catalog_price">Katalogpreis</string>
+    <string name="car_doors">Türen</string>
+    <string name="car_empty_load">Leergewicht</string>
+    <string name="car_empty_load_value">%1$d kg</string>
+    <string name="car_power_value">%1$d kW / %2$d PS</string>
 </resources>

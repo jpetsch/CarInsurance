@@ -1,4 +1,4 @@
-package com.jpapplications.carinsurance.presentation.screens
+package com.jpapplications.carinsurance.presentation.screens.carSearch
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,8 +9,11 @@ import com.jpapplications.carinsurance.domain.model.CarSearchResult
 import com.jpapplications.carinsurance.domain.usecase.SearchCarsUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -21,6 +24,9 @@ class CarSearchViewModel(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(CarSearchUiState())
     val uiState: StateFlow<CarSearchUiState> = _uiState.asStateFlow()
+    private val _carModelSelected: MutableSharedFlow<Int> = MutableSharedFlow()
+    val carModelSelected: SharedFlow<Int> = _carModelSelected.asSharedFlow()
+
     private var searchJob: Job? = null
 
     sealed interface CarSearchEvent {
@@ -35,13 +41,18 @@ class CarSearchViewModel(
         data class CarSelected(
             val carGroup: Map.Entry<String, List<Car>>,
         ) : CarSearchEvent
+
+        data class CarEntrySelected(
+            val etxCode: Int,
+        ) : CarSearchEvent
     }
 
     fun onEvent(event: CarSearchEvent) {
         when (event) {
             is CarSearchEvent.SearchTermChanged -> onSearchTermChanged(event.searchTerm)
             is CarSearchEvent.YearChanged -> onYearChanged(event.year)
-            is CarSearchEvent.CarSelected -> onCarSelected(event.carGroup)
+            is CarSearchEvent.CarSelected -> onCarGroupSelected(event.carGroup)
+            is CarSearchEvent.CarEntrySelected -> onCarEntrySelected(event.etxCode)
         }
     }
 
@@ -52,6 +63,8 @@ class CarSearchViewModel(
             currentState.copy(
                 searchTerm = searchTerm,
                 carGroups = emptyMap(),
+                selectedCarGroup = null,
+                selectedCar = null,
                 searchError = null,
             )
         }
@@ -69,8 +82,19 @@ class CarSearchViewModel(
         }
     }
 
-    private fun onCarSelected(carGroup: Map.Entry<String, List<Car>>) {
-        // TODO Implement Car Selection
+    private fun onCarGroupSelected(carGroup: Map.Entry<String, List<Car>>) {
+        _uiState.update { currentState ->
+            currentState.copy(
+                selectedCarGroup = carGroup,
+                selectedCar = null,
+            )
+        }
+    }
+
+    private fun onCarEntrySelected(etxCode: Int) {
+        viewModelScope.launch {
+            _carModelSelected.emit(etxCode)
+        }
     }
 
     private fun vehicleSearch() {
@@ -120,5 +144,7 @@ data class CarSearchUiState(
     val year: String = "",
     val hasYearError: Boolean = false,
     val carGroups: Map<String, List<Car>> = emptyMap(),
+    val selectedCarGroup: Map.Entry<String, List<Car>>? = null,
+    val selectedCar: Car? = null,
     val searchError: CarSearchError? = null,
 )

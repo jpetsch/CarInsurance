@@ -1,14 +1,19 @@
-package com.jpapplications.carinsurance.presentation.screens
+package com.jpapplications.carinsurance.presentation.screens.carSearch
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,13 +21,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import carinsurance.shared.generated.resources.Res
-import carinsurance.shared.generated.resources.search_invalid_response_error
-import carinsurance.shared.generated.resources.search_network_error
-import carinsurance.shared.generated.resources.search_request_error
-import carinsurance.shared.generated.resources.search_server_error
 import carinsurance.shared.generated.resources.year_error
 import carinsurance.shared.generated.resources.year_label
-import com.jpapplications.carinsurance.domain.model.CarSearchError
+import com.jpapplications.carinsurance.presentation.components.CarDetails
 import com.jpapplications.carinsurance.presentation.components.SearchDropdown
 import org.jetbrains.compose.resources.stringResource
 
@@ -35,7 +36,8 @@ fun CarSearchScreen(
     Column(
         modifier =
             modifier
-                .fillMaxSize(),
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(modifier = Modifier.height(16.dp))
@@ -51,7 +53,6 @@ fun CarSearchScreen(
             label = { Text(stringResource(Res.string.year_label)) },
             isError = uiState.hasYearError,
             supportingText = {
-                // TODO Mit spezifischeren Texten ergänzen wenn zeit übrig
                 Text(stringResource(Res.string.year_error))
             },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
@@ -70,6 +71,24 @@ fun CarSearchScreen(
                 onEvent(CarSearchViewModel.CarSearchEvent.CarSelected(it))
             }
         )
+
+        uiState.selectedCarGroup?.let { carGroup ->
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+            ) {
+                items(carGroup.value) { car ->
+                    CarDetails(
+                        car = car,
+                        onSelected = {
+                            onEvent(CarSearchViewModel.CarSearchEvent.CarEntrySelected(car.etxCode))
+                        },
+                    )
+                }
+            }
+        }
+
     }
 }
 

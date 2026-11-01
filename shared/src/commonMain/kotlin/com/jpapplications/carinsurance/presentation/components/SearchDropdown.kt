@@ -38,6 +38,8 @@ fun SearchDropdown(
         expanded = carGroups.isNotEmpty()
     }
 
+    val dismissDropdown = { expanded = false }
+
     ExposedDropdownMenuBox(
         expanded = expanded,
         onExpandedChange = {},
@@ -54,13 +56,16 @@ fun SearchDropdown(
 
         ExposedDropdownMenu(
             expanded = expanded,
-            onDismissRequest = { expanded = false },
+            onDismissRequest = dismissDropdown,
             modifier = Modifier.heightIn(max = 250.dp),
         ) {
             carGroups.entries.forEachIndexed { index, carGroup ->
                 DropdownMenuItem(
                     text = { Text(text = carGroup.key) },
-                    onClick = { onItemClicked(carGroup) },
+                    onClick = {
+                        onItemClicked(carGroup)
+                        dismissDropdown()
+                    },
                 )
                 if (index < carGroups.size - 1) {
                     HorizontalDivider()

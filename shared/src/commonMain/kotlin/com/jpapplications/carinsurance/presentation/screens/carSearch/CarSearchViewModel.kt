@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jpapplications.carinsurance.domain.model.Car
 import com.jpapplications.carinsurance.domain.model.CarSearchCriteria
-import com.jpapplications.carinsurance.domain.model.CarSearchError
 import com.jpapplications.carinsurance.domain.model.CarSearchResult
+import com.jpapplications.carinsurance.domain.model.NetworkError
 import com.jpapplications.carinsurance.domain.usecase.SearchCarsUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -146,5 +146,5 @@ data class CarSearchUiState(
     val carGroups: Map<String, List<Car>> = emptyMap(),
     val selectedCarGroup: Map.Entry<String, List<Car>>? = null,
     val selectedCar: Car? = null,
-    val searchError: CarSearchError? = null,
+    val searchError: NetworkError? = null,
 )

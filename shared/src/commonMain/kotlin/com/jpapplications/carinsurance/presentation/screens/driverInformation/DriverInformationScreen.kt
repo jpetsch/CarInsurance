@@ -11,11 +11,6 @@ fun DriverInformationScreen(
     onEvent: (event: DriverInformationViewModel.DriverInformationEvent) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    // TODO Sollte das hier oder im viewModel init gestartet werden?
-    LaunchedEffect(Unit) {
-        onEvent(DriverInformationViewModel.DriverInformationEvent.LoadCarDetails)
-    }
-
     uiState.car?.let { car ->
         // TODO CarDetails umbauen, so dass es auch ohne Radio Button existieren kann. Die Card reusable machen
         CarDetails(

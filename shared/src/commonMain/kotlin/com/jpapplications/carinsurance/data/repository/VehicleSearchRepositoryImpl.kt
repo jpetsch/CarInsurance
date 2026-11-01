@@ -3,10 +3,9 @@ package com.jpapplications.carinsurance.data.repository
 import com.jpapplications.carinsurance.data.datasource.CarInsuranceService
 import com.jpapplications.carinsurance.data.model.CarDto
 import com.jpapplications.carinsurance.data.model.CarSearchRequestDto
-import com.jpapplications.carinsurance.domain.model.Car
 import com.jpapplications.carinsurance.domain.model.CarSearchCriteria
-import com.jpapplications.carinsurance.domain.model.CarSearchError
 import com.jpapplications.carinsurance.domain.model.CarSearchResult
+import com.jpapplications.carinsurance.domain.model.NetworkError
 import com.jpapplications.carinsurance.domain.repository.CarSearchRepository
 import io.ktor.client.call.NoTransformationFoundException
 import io.ktor.client.plugins.ResponseException
@@ -36,39 +35,17 @@ class CarSearchRepositoryImpl(
         } catch (exception: ResponseException) {
             val error =
                 if (exception.response.status.value >= 500) {
-                    CarSearchError.SERVER
+                    NetworkError.SERVER
                 } else {
-                    CarSearchError.REQUEST_REJECTED
+                    NetworkError.REQUEST_REJECTED
                 }
             CarSearchResult.Failure(error)
         } catch (_: SerializationException) {
-            CarSearchResult.Failure(CarSearchError.INVALID_RESPONSE)
+            CarSearchResult.Failure(NetworkError.INVALID_RESPONSE)
         } catch (_: NoTransformationFoundException) {
-            CarSearchResult.Failure(CarSearchError.INVALID_RESPONSE)
+            CarSearchResult.Failure(NetworkError.INVALID_RESPONSE)
         } catch (_: IOException) {
-            CarSearchResult.Failure(CarSearchError.NETWORK)
+            CarSearchResult.Failure(NetworkError.NETWORK)
         }
     }
 }
-
-private fun CarDto.toDomain() =
-    Car(
-        matriculationDate = matriculationDate,
-        constructionStartYear = constructionStartYear,
-        catalogPrice = catalogPrice,
-        etxCode = etxCode,
-        description = description,
-        capacity = capacity,
-        model = model,
-        doors = doors,
-        seats = seats,
-        emptyLoad = emptyLoad,
-        horsePower = horsePower,
-        enginePowerInKw = enginePowerInKw,
-        vehicleType = vehicleType,
-        vehicleClass = vehicleClass,
-        constructionType = constructionType,
-        fuel = fuel,
-        brand = brand,
-        eMobility = eMobility,
-    )

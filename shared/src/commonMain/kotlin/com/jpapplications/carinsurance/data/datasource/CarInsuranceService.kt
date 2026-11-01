@@ -20,4 +20,10 @@ class CarInsuranceService(
             parameter("search-term", request.searchTerm)
             request.year?.let { parameter("year", it) }
         }.body()
+
+    suspend fun vehicleModel(etxCode: Int): CarDto =
+        httpClient.get {
+            url("$baseUrl/api/v1/car/vehicle/model")
+            parameter("etxCode", etxCode)
+        }.body()
 }

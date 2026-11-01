@@ -4,17 +4,20 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.layout.size
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import carinsurance.shared.generated.resources.Res
 import carinsurance.shared.generated.resources.driver_additional_postal_code
 import carinsurance.shared.generated.resources.driver_company
 import carinsurance.shared.generated.resources.driver_company_name_label
+import carinsurance.shared.generated.resources.driver_city_lookup_error
 import carinsurance.shared.generated.resources.driver_damage_fault
 import carinsurance.shared.generated.resources.driver_damage_in_last_three_years
 import carinsurance.shared.generated.resources.driver_damage_sum
@@ -118,6 +121,20 @@ internal fun VehicleInformationSection(
         },
         label = { Text(stringResource(Res.string.driver_postal_code_label)) },
         modifier = Modifier.fillMaxWidth(),
+        suffix = {
+            uiState.postalCodeCity?.let { Text(it.name) }
+            if (uiState.isPostalCodeCityLoading) {
+                CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
+            }
+        },
+        supportingText = {
+            if (uiState.postalCodeCityError != null) {
+                Text(
+                    text = stringResource(Res.string.driver_city_lookup_error),
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
+        },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         singleLine = true,
     )
@@ -197,6 +214,20 @@ internal fun MainDriverInformationSection(
         enabled = uiState.isMainDriverSelf == false,
         label = { Text(stringResource(Res.string.driver_additional_postal_code)) },
         modifier = Modifier.fillMaxWidth(),
+        suffix = {
+            uiState.additionalDriverCity?.let { Text(it.name) }
+            if (uiState.isAdditionalPostalCodeCityLoading) {
+                CircularProgressIndicator(modifier = Modifier.size(16.dp), strokeWidth = 2.dp)
+            }
+        },
+        supportingText = {
+            if (uiState.additionalPostalCodeCityError != null) {
+                Text(
+                    text = stringResource(Res.string.driver_city_lookup_error),
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
+        },
         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         singleLine = true,
     )

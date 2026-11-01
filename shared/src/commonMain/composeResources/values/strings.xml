@@ -16,6 +16,8 @@
     <string name="car_empty_load_value">%1$d kg</string>
     <string name="car_power_value">%1$d kW / %2$d PS</string>
     <string name="driver_vehicle_title">Dein Fahrzeug</string>
+    <string name="driver_accessories_value">Zubehör-Neuwert (CHF)</string>
+    <string name="driver_accessories_value_minimum">Der Wert muss mindestens %1$d CHF betragen.</string>
     <string name="driver_leased">Ist das Auto geleast?</string>
     <string name="driver_yes">Ja</string>
     <string name="driver_no">Nein</string>
@@ -25,6 +27,7 @@
     <string name="driver_first_name_label">Vorname</string>
     <string name="driver_company_name_label">Firmenname</string>
     <string name="driver_postal_code_label">PLZ</string>
+    <string name="driver_city_lookup_error">Die Stadt konnte für diese PLZ nicht ermittelt werden.</string>
     <string name="driver_usage">Wie wird es hauptsächlich benutzt?</string>
     <string name="driver_main_driver">Wer fährt am meisten?</string>
     <string name="driver_self">Ich selbst</string>
@@ -48,4 +51,7 @@
     <string name="driver_payment_interval_monthly">Monatlich</string>
     <string name="driver_view_recommendation">Unsere Empfehlung ansehen</string>
     <string name="driver_configuration_load_error">Die Auswahlmöglichkeiten konnten nicht geladen werden.</string>
+    <string name="driver_recommendation_input_error">Bitte vervollständige alle erforderlichen Angaben, bevor du die Empfehlung anforderst.</string>
+    <string name="driver_recommendation_error">Die Empfehlung konnte nicht geladen werden. Bitte versuche es erneut.</string>
+    <string name="driver_recommendation_premium">Gesamtprämie: %1$s CHF</string>
 </resources>

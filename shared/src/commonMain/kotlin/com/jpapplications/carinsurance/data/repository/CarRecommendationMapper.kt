@@ -60,9 +60,9 @@ private fun RecommendationAbTest.toDto() =
 
 private fun RecommendationClaim.toDto() =
     RecommendationClaimDto(
-        schadensfallTyp = schadensfallTyp,
+        schadensfallTyp = schadensfallTyp.apiCode,
         schadenfallYear = schadenfallYear,
-        schadensfallSchuld = schadensfallSchuld,
+        schadensfallSchuld = schadensfallSchuld.apiCode,
         summe = summe,
     )
 
@@ -88,12 +88,12 @@ private fun RecommendationVehicle.toDto() =
         eMobility = car.eMobility,
         newValueAccessories = newValueAccessories,
         financing = financing,
-        vehicleUsage = vehicleUsage,
+        vehicleUsage = vehicleUsage.apiCode,
     )
 
 private fun RecommendationDriver.toDto() =
     RecommendationDriverDto(
-        geschlecht = geschlecht,
+        geschlecht = geschlecht.apiCode,
         geburtsdatum = geburtsdatum,
         nationalitaet = nationalitaet,
         stadt = stadt.toDto(),

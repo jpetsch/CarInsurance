@@ -7,6 +7,9 @@ import com.jpapplications.carinsurance.domain.model.CarRecommendation
 import com.jpapplications.carinsurance.domain.model.CarRecommendationRequest
 import com.jpapplications.carinsurance.domain.model.CarRecommendationResult
 import com.jpapplications.carinsurance.domain.model.CityLookupResult
+import com.jpapplications.carinsurance.domain.model.DamageFault
+import com.jpapplications.carinsurance.domain.model.DamageType
+import com.jpapplications.carinsurance.domain.model.Gender
 import com.jpapplications.carinsurance.domain.model.NetworkError
 import com.jpapplications.carinsurance.domain.model.OfferConfiguration
 import com.jpapplications.carinsurance.domain.model.OfferConfigurationResult
@@ -15,6 +18,7 @@ import com.jpapplications.carinsurance.domain.model.RecommendationCity
 import com.jpapplications.carinsurance.domain.model.RecommendationDriver
 import com.jpapplications.carinsurance.domain.model.RecommendationVehicle
 import com.jpapplications.carinsurance.domain.model.VehicleModelResult
+import com.jpapplications.carinsurance.domain.model.VehicleUsage
 import com.jpapplications.carinsurance.domain.usecase.GetCarRecommendationUseCase
 import com.jpapplications.carinsurance.domain.usecase.GetCityByPostalCodeUseCase
 import com.jpapplications.carinsurance.domain.usecase.GetOfferConfigurationUseCase
@@ -57,17 +61,17 @@ class DriverInformationViewModel(
         data class PostalCodeChanged(val postalCode: String) : DriverInformationEvent
         data class NewValueAccessoriesChanged(val value: String) : DriverInformationEvent
         data class NewValueAccessoriesFocusChanged(val isFocused: Boolean) : DriverInformationEvent
-        data class VehicleUsageChanged(val vehicleUsage: String) : DriverInformationEvent
+        data class VehicleUsageChanged(val vehicleUsage: VehicleUsage) : DriverInformationEvent
         data class MainDriverChanged(val isSelf: Boolean) : DriverInformationEvent
-        data class GenderChanged(val gender: String) : DriverInformationEvent
+        data class GenderChanged(val gender: Gender) : DriverInformationEvent
         data class DateOfBirthChanged(val dateOfBirth: String) : DriverInformationEvent
         data class NationalityChanged(val nationality: String) : DriverInformationEvent
         data class AdditionalDriverPostalCodeChanged(val postalCode: String) : DriverInformationEvent
         data class DrivingTestYearChanged(val year: String) : DriverInformationEvent
         data class DamageInLastThreeYearsChanged(val hadDamage: Boolean) : DriverInformationEvent
-        data class DamageTypeChanged(val damageType: String) : DriverInformationEvent
+        data class DamageTypeChanged(val damageType: DamageType) : DriverInformationEvent
         data class DamageYearChanged(val year: Int) : DriverInformationEvent
-        data class DamageFaultChanged(val fault: String) : DriverInformationEvent
+        data class DamageFaultChanged(val fault: DamageFault) : DriverInformationEvent
         data class DamageSumChanged(val sum: String) : DriverInformationEvent
         data class InsuranceStartDateChanged(val date: String) : DriverInformationEvent
         data class PaymentIntervalChanged(val interval: PaymentInterval) : DriverInformationEvent
@@ -531,9 +535,9 @@ data class DriverInformationUiState(
     val postalCodeCity: RecommendationCity? = null,
     val isPostalCodeCityLoading: Boolean = false,
     val postalCodeCityError: NetworkError? = null,
-    val vehicleUsage: String? = null,
+    val vehicleUsage: VehicleUsage? = null,
     val isMainDriverSelf: Boolean? = null,
-    val gender: String? = null,
+    val gender: Gender? = null,
     val dateOfBirth: String = "",
     val nationality: String = "Schweiz",
     val additionalDriverPostalCode: String = "",
@@ -542,9 +546,9 @@ data class DriverInformationUiState(
     val additionalPostalCodeCityError: NetworkError? = null,
     val drivingTestYear: String = "",
     val hadDamageInLastThreeYears: Boolean? = null,
-    val damageType: String? = null,
+    val damageType: DamageType? = null,
     val damageYear: Int? = null,
-    val damageFault: String? = null,
+    val damageFault: DamageFault? = null,
     val damageSum: String = "",
     val insuranceStartDate: String = "",
     val paymentInterval: PaymentInterval? = null,

@@ -18,16 +18,40 @@ import carinsurance.shared.generated.resources.driver_additional_postal_code
 import carinsurance.shared.generated.resources.driver_company
 import carinsurance.shared.generated.resources.driver_company_name_label
 import carinsurance.shared.generated.resources.driver_city_lookup_error
+import carinsurance.shared.generated.resources.driver_damage_animal_collision
+import carinsurance.shared.generated.resources.driver_damage_alpine_hazards
 import carinsurance.shared.generated.resources.driver_damage_fault
+import carinsurance.shared.generated.resources.driver_damage_glass
 import carinsurance.shared.generated.resources.driver_damage_in_last_three_years
+import carinsurance.shared.generated.resources.driver_damage_assistance
+import carinsurance.shared.generated.resources.driver_damage_elemental
+import carinsurance.shared.generated.resources.driver_damage_fire
+import carinsurance.shared.generated.resources.driver_damage_hail
+import carinsurance.shared.generated.resources.driver_damage_liability_both
+import carinsurance.shared.generated.resources.driver_damage_liability_material
+import carinsurance.shared.generated.resources.driver_damage_liability_personal
+import carinsurance.shared.generated.resources.driver_damage_marten
+import carinsurance.shared.generated.resources.driver_damage_parking
+import carinsurance.shared.generated.resources.driver_damage_passenger
+import carinsurance.shared.generated.resources.driver_damage_own_vehicle_collision
 import carinsurance.shared.generated.resources.driver_damage_sum
+import carinsurance.shared.generated.resources.driver_damage_theft_effects
+import carinsurance.shared.generated.resources.driver_damage_theft_vehicle
 import carinsurance.shared.generated.resources.driver_damage_type
 import carinsurance.shared.generated.resources.driver_damage_year
+import carinsurance.shared.generated.resources.driver_damage_vandalism
 import carinsurance.shared.generated.resources.driver_date_of_birth
 import carinsurance.shared.generated.resources.driver_date_of_birth_hint
 import carinsurance.shared.generated.resources.driver_driving_test_year
+import carinsurance.shared.generated.resources.driver_fault_no_insurance_payment
+import carinsurance.shared.generated.resources.driver_fault_no_self_payment
+import carinsurance.shared.generated.resources.driver_fault_with_bonus_protection
+import carinsurance.shared.generated.resources.driver_fault_yes_insurance_payment
+import carinsurance.shared.generated.resources.driver_fault_yes_self_payment
 import carinsurance.shared.generated.resources.driver_first_name_label
 import carinsurance.shared.generated.resources.driver_gender
+import carinsurance.shared.generated.resources.driver_gender_female
+import carinsurance.shared.generated.resources.driver_gender_male
 import carinsurance.shared.generated.resources.driver_insurance_start_date
 import carinsurance.shared.generated.resources.driver_leased
 import carinsurance.shared.generated.resources.driver_main_driver
@@ -35,6 +59,7 @@ import carinsurance.shared.generated.resources.driver_me
 import carinsurance.shared.generated.resources.driver_nationality
 import carinsurance.shared.generated.resources.driver_no
 import carinsurance.shared.generated.resources.driver_other_person
+import carinsurance.shared.generated.resources.driver_option_unknown
 import carinsurance.shared.generated.resources.driver_payment_interval
 import carinsurance.shared.generated.resources.driver_payment_interval_annual
 import carinsurance.shared.generated.resources.driver_payment_interval_monthly
@@ -43,8 +68,20 @@ import carinsurance.shared.generated.resources.driver_postal_code_label
 import carinsurance.shared.generated.resources.driver_registration_owner
 import carinsurance.shared.generated.resources.driver_self
 import carinsurance.shared.generated.resources.driver_usage
+import carinsurance.shared.generated.resources.driver_usage_business
+import carinsurance.shared.generated.resources.driver_usage_commercial_goods
+import carinsurance.shared.generated.resources.driver_usage_commercial_person
+import carinsurance.shared.generated.resources.driver_usage_occasional_business
+import carinsurance.shared.generated.resources.driver_usage_private
+import carinsurance.shared.generated.resources.driver_usage_private_and_travel
+import carinsurance.shared.generated.resources.driver_usage_rental
+import carinsurance.shared.generated.resources.driver_usage_rental_platforms
 import carinsurance.shared.generated.resources.driver_when_should_it_start
 import carinsurance.shared.generated.resources.driver_yes
+import com.jpapplications.carinsurance.domain.model.DamageFault
+import com.jpapplications.carinsurance.domain.model.DamageType
+import com.jpapplications.carinsurance.domain.model.Gender
+import com.jpapplications.carinsurance.domain.model.VehicleUsage
 import com.jpapplications.carinsurance.presentation.components.ChoiceButtons
 import com.jpapplications.carinsurance.presentation.components.DateInputField
 import com.jpapplications.carinsurance.presentation.components.SelectionDropdown
@@ -62,6 +99,7 @@ internal fun VehicleInformationSection(
         } else {
             configuration?.fahrzeugNutzung.orEmpty()
         }
+    val localizedUsageOptions = usageOptions.map { it to it.toLabel() }
 
     Question(stringResource(Res.string.driver_leased))
     ChoiceButtons(
@@ -141,11 +179,17 @@ internal fun VehicleInformationSection(
 
     Spacer(modifier = Modifier.height(16.dp))
     SelectionDropdown(
-        value = uiState.vehicleUsage.orEmpty(),
-        options = usageOptions,
+        value = localizedUsageOptions.firstOrNull { it.first == uiState.vehicleUsage }?.second.orEmpty(),
+        options = localizedUsageOptions.map { it.second },
         label = stringResource(Res.string.driver_usage),
         onOptionSelected = {
-            onEvent(DriverInformationViewModel.DriverInformationEvent.VehicleUsageChanged(it))
+            localizedUsageOptions.firstOrNull { option -> option.second == it }?.let { option ->
+                onEvent(
+                    DriverInformationViewModel.DriverInformationEvent.VehicleUsageChanged(
+                        option.first,
+                    ),
+                )
+            }
         },
     )
 }
@@ -173,12 +217,16 @@ internal fun MainDriverInformationSection(
     )
 
     Spacer(modifier = Modifier.height(16.dp))
+    val genderOptions =
+        configuration?.gender.orEmpty().map { it to it.toLabel() }
     SelectionDropdown(
-        value = uiState.gender.orEmpty(),
-        options = configuration?.gender.orEmpty(),
+        value = genderOptions.firstOrNull { it.first == uiState.gender }?.second.orEmpty(),
+        options = genderOptions.map { it.second },
         label = stringResource(Res.string.driver_gender),
         onOptionSelected = {
-            onEvent(DriverInformationViewModel.DriverInformationEvent.GenderChanged(it))
+            genderOptions.firstOrNull { option -> option.second == it }?.let { option ->
+                onEvent(DriverInformationViewModel.DriverInformationEvent.GenderChanged(option.first))
+            }
         },
     )
 
@@ -272,13 +320,23 @@ internal fun DamageHistorySection(
     )
 
     if (uiState.hadDamageInLastThreeYears == true) {
+        val damageTypeOptions =
+            configuration?.schadensfallTyp.orEmpty().map { it to it.toLabel() }
+        val damageFaultOptions =
+            configuration?.schadensfallSchuld.orEmpty().map { it to it.toLabel() }
         Spacer(modifier = Modifier.height(8.dp))
         SelectionDropdown(
-            value = uiState.damageType.orEmpty(),
-            options = configuration?.schadensfallTyp.orEmpty(),
+            value = damageTypeOptions.firstOrNull { it.first == uiState.damageType }?.second.orEmpty(),
+            options = damageTypeOptions.map { it.second },
             label = stringResource(Res.string.driver_damage_type),
             onOptionSelected = {
-                onEvent(DriverInformationViewModel.DriverInformationEvent.DamageTypeChanged(it))
+                damageTypeOptions.firstOrNull { option -> option.second == it }?.let { option ->
+                    onEvent(
+                        DriverInformationViewModel.DriverInformationEvent.DamageTypeChanged(
+                            option.first,
+                        ),
+                    )
+                }
             },
         )
 
@@ -296,11 +354,17 @@ internal fun DamageHistorySection(
 
         Spacer(modifier = Modifier.height(8.dp))
         SelectionDropdown(
-            value = uiState.damageFault.orEmpty(),
-            options = configuration?.schadensfallSchuld.orEmpty(),
+            value = damageFaultOptions.firstOrNull { it.first == uiState.damageFault }?.second.orEmpty(),
+            options = damageFaultOptions.map { it.second },
             label = stringResource(Res.string.driver_damage_fault),
             onOptionSelected = {
-                onEvent(DriverInformationViewModel.DriverInformationEvent.DamageFaultChanged(it))
+                damageFaultOptions.firstOrNull { option -> option.second == it }?.let { option ->
+                    onEvent(
+                        DriverInformationViewModel.DriverInformationEvent.DamageFaultChanged(
+                            option.first,
+                        ),
+                    )
+                }
             },
         )
 
@@ -363,3 +427,79 @@ private fun Question(text: String) {
     Text(text = text, style = MaterialTheme.typography.titleMedium)
     Spacer(modifier = Modifier.height(8.dp))
 }
+
+@Composable
+private fun Gender.toLabel(): String =
+    when (this) {
+        Gender.Known.MALE -> stringResource(Res.string.driver_gender_male)
+        Gender.Known.FEMALE -> stringResource(Res.string.driver_gender_female)
+        is Gender.Unknown -> toUnknownOptionLabel(apiCode)
+    }
+
+@Composable
+private fun VehicleUsage.toLabel(): String =
+    when (this) {
+        VehicleUsage.Known.PRIVATE -> stringResource(Res.string.driver_usage_private)
+        VehicleUsage.Known.PRIVATE_AND_TRAVEL ->
+            stringResource(Res.string.driver_usage_private_and_travel)
+        VehicleUsage.Known.OCCASIONAL_BUSINESS ->
+            stringResource(Res.string.driver_usage_occasional_business)
+        VehicleUsage.Known.BUSINESS -> stringResource(Res.string.driver_usage_business)
+        VehicleUsage.Known.COMMERCIAL_PERSON ->
+            stringResource(Res.string.driver_usage_commercial_person)
+        VehicleUsage.Known.COMMERCIAL_GOODS ->
+            stringResource(Res.string.driver_usage_commercial_goods)
+        VehicleUsage.Known.RENTAL_PLATFORMS ->
+            stringResource(Res.string.driver_usage_rental_platforms)
+        VehicleUsage.Known.RENTAL -> stringResource(Res.string.driver_usage_rental)
+        is VehicleUsage.Unknown -> toUnknownOptionLabel(apiCode)
+    }
+
+@Composable
+private fun DamageType.toLabel(): String =
+    when (this) {
+        DamageType.LIABILITY_PERSONAL ->
+            stringResource(Res.string.driver_damage_liability_personal)
+        DamageType.LIABILITY_MATERIAL ->
+            stringResource(Res.string.driver_damage_liability_material)
+        DamageType.LIABILITY_MATERIAL_AND_PERSONAL ->
+            stringResource(Res.string.driver_damage_liability_both)
+        DamageType.COLLISION_MATERIAL_OWN_VEHICLE ->
+            stringResource(Res.string.driver_damage_own_vehicle_collision)
+        DamageType.THEFT_VEHICLE -> stringResource(Res.string.driver_damage_theft_vehicle)
+        DamageType.THEFT_PERSONALEFFECTS ->
+            stringResource(Res.string.driver_damage_theft_effects)
+        DamageType.MARTEN -> stringResource(Res.string.driver_damage_marten)
+        DamageType.VANDALISM -> stringResource(Res.string.driver_damage_vandalism)
+        DamageType.ELEMENTAL -> stringResource(Res.string.driver_damage_elemental)
+        DamageType.ALPINE_HAZARDS -> stringResource(Res.string.driver_damage_alpine_hazards)
+        DamageType.HAIL -> stringResource(Res.string.driver_damage_hail)
+        DamageType.FIRE -> stringResource(Res.string.driver_damage_fire)
+        DamageType.GLAS -> stringResource(Res.string.driver_damage_glass)
+        DamageType.ANIMALCOLLISION -> stringResource(Res.string.driver_damage_animal_collision)
+        DamageType.PARKINGDAMAGE -> stringResource(Res.string.driver_damage_parking)
+        DamageType.ASSISTANCE -> stringResource(Res.string.driver_damage_assistance)
+        DamageType.PASSENGER -> stringResource(Res.string.driver_damage_passenger)
+    }
+
+@Composable
+private fun DamageFault.toLabel(): String =
+    when (this) {
+        DamageFault.WITH_BONUSSCHUTZ ->
+            stringResource(Res.string.driver_fault_with_bonus_protection)
+        DamageFault.YES_SELF_PAYMENT ->
+            stringResource(Res.string.driver_fault_yes_self_payment)
+        DamageFault.YES_INSURANCE_PAYMENT ->
+            stringResource(Res.string.driver_fault_yes_insurance_payment)
+        DamageFault.NO_SELF_PAYMENT ->
+            stringResource(Res.string.driver_fault_no_self_payment)
+        DamageFault.NO_INSURANCE_PAYMENT ->
+            stringResource(Res.string.driver_fault_no_insurance_payment)
+    }
+
+@Composable
+private fun toUnknownOptionLabel(apiCode: String): String =
+    stringResource(
+        Res.string.driver_option_unknown,
+        apiCode.replace('_', ' ').lowercase().replaceFirstChar(Char::uppercase),
+    )

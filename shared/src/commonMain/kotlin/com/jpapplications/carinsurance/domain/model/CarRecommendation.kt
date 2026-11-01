@@ -19,11 +19,11 @@ data class RecommendationVehicle(
     val matriculationDate: Int,
     val newValueAccessories: Int,
     val financing: String,
-    val vehicleUsage: String,
+    val vehicleUsage: VehicleUsage,
 )
 
 data class RecommendationDriver(
-    val geschlecht: String,
+    val geschlecht: Gender,
     val geburtsdatum: String,
     val nationalitaet: String,
     val stadt: RecommendationCity,
@@ -38,9 +38,9 @@ data class RecommendationCity(
 )
 
 data class RecommendationClaim(
-    val schadensfallTyp: String,
+    val schadensfallTyp: DamageType,
     val schadenfallYear: Int,
-    val schadensfallSchuld: String,
+    val schadensfallSchuld: DamageFault,
     val summe: Double,
 )
 

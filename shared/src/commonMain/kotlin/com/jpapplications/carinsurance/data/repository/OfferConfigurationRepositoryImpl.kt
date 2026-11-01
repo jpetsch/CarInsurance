@@ -28,10 +28,18 @@ internal class OfferConfigurationRepositoryImpl(
             OfferConfigurationResult.Failure(error)
         } catch (_: SerializationException) {
             OfferConfigurationResult.Failure(NetworkError.INVALID_RESPONSE)
+        } catch (_: UnsupportedOfferConfigurationValueException) {
+            OfferConfigurationResult.Failure(NetworkError.INVALID_RESPONSE)
         } catch (_: NoTransformationFoundException) {
             OfferConfigurationResult.Failure(NetworkError.INVALID_RESPONSE)
         } catch (_: IOException) {
             OfferConfigurationResult.Failure(NetworkError.NETWORK)
         }
+
     }
 }
+
+internal class UnsupportedOfferConfigurationValueException(
+    valueType: String,
+    apiCode: String,
+) : Exception("Unsupported $valueType API code: $apiCode")

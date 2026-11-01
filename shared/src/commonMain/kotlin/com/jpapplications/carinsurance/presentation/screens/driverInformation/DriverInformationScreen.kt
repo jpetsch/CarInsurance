@@ -1,23 +1,15 @@
 package com.jpapplications.carinsurance.presentation.screens.driverInformation
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.ExposedDropdownMenuAnchorType
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -40,6 +32,18 @@ import carinsurance.shared.generated.resources.driver_additional_postal_code
 import carinsurance.shared.generated.resources.driver_date_of_birth
 import carinsurance.shared.generated.resources.driver_date_of_birth_hint
 import carinsurance.shared.generated.resources.driver_driving_test_year
+import carinsurance.shared.generated.resources.driver_damage_fault
+import carinsurance.shared.generated.resources.driver_damage_in_last_three_years
+import carinsurance.shared.generated.resources.driver_damage_sum
+import carinsurance.shared.generated.resources.driver_damage_type
+import carinsurance.shared.generated.resources.driver_damage_year
+import carinsurance.shared.generated.resources.driver_insurance_start_date
+import carinsurance.shared.generated.resources.driver_payment_interval_annual
+import carinsurance.shared.generated.resources.driver_payment_interval_monthly
+import carinsurance.shared.generated.resources.driver_payment_interval_semiannual
+import carinsurance.shared.generated.resources.driver_payment_interval
+import carinsurance.shared.generated.resources.driver_when_should_it_start
+import carinsurance.shared.generated.resources.driver_view_recommendation
 import carinsurance.shared.generated.resources.driver_first_name_label
 import carinsurance.shared.generated.resources.driver_gender
 import carinsurance.shared.generated.resources.driver_leased
@@ -55,6 +59,8 @@ import carinsurance.shared.generated.resources.driver_usage
 import carinsurance.shared.generated.resources.driver_vehicle_title
 import carinsurance.shared.generated.resources.driver_yes
 import com.jpapplications.carinsurance.presentation.components.CarDetails
+import com.jpapplications.carinsurance.presentation.components.ChoiceButtons
+import com.jpapplications.carinsurance.presentation.components.SelectionDropdown
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -71,6 +77,14 @@ fun DriverInformationScreen(
             ),
         )
     }
+    var insuranceStartDateField by remember {
+        mutableStateOf(
+            TextFieldValue(
+                text = uiState.insuranceStartDate,
+                selection = TextRange(uiState.insuranceStartDate.length),
+            ),
+        )
+    }
 
     LaunchedEffect(uiState.dateOfBirth) {
         if (dateOfBirthField.text != uiState.dateOfBirth) {
@@ -78,6 +92,16 @@ fun DriverInformationScreen(
                 TextFieldValue(
                     text = uiState.dateOfBirth,
                     selection = TextRange(uiState.dateOfBirth.length),
+                )
+        }
+    }
+
+    LaunchedEffect(uiState.insuranceStartDate) {
+        if (insuranceStartDateField.text != uiState.insuranceStartDate) {
+            insuranceStartDateField =
+                TextFieldValue(
+                    text = uiState.insuranceStartDate,
+                    selection = TextRange(uiState.insuranceStartDate.length),
                 )
         }
     }
@@ -211,7 +235,7 @@ fun DriverInformationScreen(
         OutlinedTextField(
             value = dateOfBirthField,
             onValueChange = { input ->
-                val formatted = formatDateOfBirthInput(input)
+                val formatted = formatDateInput(input)
                 dateOfBirthField = formatted
                 onEvent(
                     DriverInformationViewModel.DriverInformationEvent.DateOfBirthChanged(
@@ -264,6 +288,109 @@ fun DriverInformationScreen(
             singleLine = true,
         )
 
+        Spacer(modifier = Modifier.height(16.dp))
+        Question(stringResource(Res.string.driver_damage_in_last_three_years))
+        ChoiceButtons(
+            firstLabel = stringResource(Res.string.driver_yes),
+            firstSelected = uiState.hadDamageInLastThreeYears == true,
+            onFirstSelected = {
+                onEvent(
+                    DriverInformationViewModel.DriverInformationEvent.DamageInLastThreeYearsChanged(true),
+                )
+            },
+            secondLabel = stringResource(Res.string.driver_no),
+            secondSelected = uiState.hadDamageInLastThreeYears == false,
+            onSecondSelected = {
+                onEvent(
+                    DriverInformationViewModel.DriverInformationEvent.DamageInLastThreeYearsChanged(false),
+                )
+            },
+        )
+
+        if (uiState.hadDamageInLastThreeYears == true) {
+            Spacer(modifier = Modifier.height(8.dp))
+            SelectionDropdown(
+                value = uiState.damageType.orEmpty(),
+                options = configuration?.schadensfallTyp.orEmpty(),
+                label = stringResource(Res.string.driver_damage_type),
+                onOptionSelected = {
+                    onEvent(DriverInformationViewModel.DriverInformationEvent.DamageTypeChanged(it))
+                },
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+            SelectionDropdown(
+                value = uiState.damageYear?.toString().orEmpty(),
+                options = configuration?.schadenfallYear.orEmpty().map(Int::toString),
+                label = stringResource(Res.string.driver_damage_year),
+                onOptionSelected = {
+                    it.toIntOrNull()?.let { year ->
+                        onEvent(DriverInformationViewModel.DriverInformationEvent.DamageYearChanged(year))
+                    }
+                },
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+            SelectionDropdown(
+                value = uiState.damageFault.orEmpty(),
+                options = configuration?.schadensfallSchuld.orEmpty(),
+                label = stringResource(Res.string.driver_damage_fault),
+                onOptionSelected = {
+                    onEvent(DriverInformationViewModel.DriverInformationEvent.DamageFaultChanged(it))
+                },
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+            OutlinedTextField(
+                value = uiState.damageSum,
+                onValueChange = {
+                    onEvent(DriverInformationViewModel.DriverInformationEvent.DamageSumChanged(it))
+                },
+                label = { Text(stringResource(Res.string.driver_damage_sum)) },
+                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                singleLine = true,
+            )
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+        Text(
+            text = stringResource(Res.string.driver_when_should_it_start),
+            style = MaterialTheme.typography.titleLarge,
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        OutlinedTextField(
+            value = insuranceStartDateField,
+            onValueChange = { input ->
+                val formatted = formatDateInput(input)
+                insuranceStartDateField = formatted
+                onEvent(
+                    DriverInformationViewModel.DriverInformationEvent.InsuranceStartDateChanged(
+                        formatted.text,
+                    ),
+                )
+            },
+            label = { Text(stringResource(Res.string.driver_insurance_start_date)) },
+            placeholder = { Text(stringResource(Res.string.driver_date_of_birth_hint)) },
+            modifier = Modifier.fillMaxWidth(),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            singleLine = true,
+        )
+        Spacer(modifier = Modifier.height(8.dp))
+        SelectionDropdown(
+            value = uiState.paymentInterval.orEmpty(),
+            options =
+                listOf(
+                    stringResource(Res.string.driver_payment_interval_annual),
+                    stringResource(Res.string.driver_payment_interval_semiannual),
+                    stringResource(Res.string.driver_payment_interval_monthly),
+                ),
+            label = stringResource(Res.string.driver_payment_interval),
+            onOptionSelected = {
+                onEvent(DriverInformationViewModel.DriverInformationEvent.PaymentIntervalChanged(it))
+            },
+        )
+
         if (uiState.offerConfigurationError != null) {
             Spacer(modifier = Modifier.height(8.dp))
             Text(
@@ -271,10 +398,20 @@ fun DriverInformationScreen(
                 color = MaterialTheme.colorScheme.error,
             )
         }
+
+        Spacer(modifier = Modifier.height(24.dp))
+        Button(
+            onClick = {
+                onEvent(DriverInformationViewModel.DriverInformationEvent.RecommendationRequested)
+            },
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Text(stringResource(Res.string.driver_view_recommendation))
+        }
     }
 }
 
-private fun formatDateOfBirthInput(input: TextFieldValue): TextFieldValue {
+private fun formatDateInput(input: TextFieldValue): TextFieldValue {
     val digitsBeforeCursor = input.text.take(input.selection.start).count(Char::isDigit)
     val digits = input.text.filter(Char::isDigit).take(8)
     val formatted =
@@ -299,87 +436,4 @@ private fun formatDateOfBirthInput(input: TextFieldValue): TextFieldValue {
 private fun Question(text: String) {
     Text(text = text, style = MaterialTheme.typography.titleMedium)
     Spacer(modifier = Modifier.height(8.dp))
-}
-
-@Composable
-private fun ChoiceButtons(
-    firstLabel: String,
-    firstSelected: Boolean,
-    onFirstSelected: () -> Unit,
-    secondLabel: String,
-    secondSelected: Boolean,
-    onSecondSelected: () -> Unit,
-) {
-    Row(modifier = Modifier.fillMaxWidth()) {
-        Button(
-            onClick = onFirstSelected,
-            modifier = Modifier.weight(1f),
-            colors = choiceButtonColors(firstSelected),
-        ) {
-            Text(firstLabel)
-        }
-        Spacer(modifier = Modifier.width(8.dp))
-        Button(
-            onClick = onSecondSelected,
-            modifier = Modifier.weight(1f),
-            colors = choiceButtonColors(secondSelected),
-        ) {
-            Text(secondLabel)
-        }
-    }
-}
-
-@Composable
-private fun choiceButtonColors(selected: Boolean) =
-    ButtonDefaults.buttonColors(
-        containerColor =
-            if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surfaceVariant,
-        contentColor =
-            if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurfaceVariant,
-    )
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun SelectionDropdown(
-    value: String,
-    options: List<String>,
-    label: String,
-    onOptionSelected: (String) -> Unit,
-) {
-    var expanded by remember { mutableStateOf(false) }
-
-    ExposedDropdownMenuBox(
-        expanded = expanded,
-        onExpandedChange = { expanded = it && options.isNotEmpty() },
-        modifier = Modifier.fillMaxWidth(),
-    ) {
-        OutlinedTextField(
-            value = value,
-            onValueChange = {},
-            readOnly = true,
-            enabled = options.isNotEmpty(),
-            label = { Text(label) },
-            trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-            modifier =
-                Modifier
-                    .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
-                    .fillMaxWidth(),
-            singleLine = true,
-        )
-
-        ExposedDropdownMenu(
-            expanded = expanded,
-            onDismissRequest = { expanded = false },
-        ) {
-            options.forEach { option ->
-                DropdownMenuItem(
-                    text = { Text(option) },
-                    onClick = {
-                        onOptionSelected(option)
-                        expanded = false
-                    },
-                )
-            }
-        }
-    }
 }

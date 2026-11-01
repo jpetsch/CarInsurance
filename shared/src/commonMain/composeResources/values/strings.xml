@@ -35,5 +35,17 @@
     <string name="driver_nationality">Nationalität</string>
     <string name="driver_additional_postal_code">PLZ</string>
     <string name="driver_driving_test_year">Jahr der Fahrprüfung</string>
+    <string name="driver_damage_in_last_three_years">Hatte der Fahrer in den letzten drei Jahren einen Schadenfall?</string>
+    <string name="driver_damage_type">Art des Schadens</string>
+    <string name="driver_damage_year">Jahr</string>
+    <string name="driver_damage_fault">Schuld</string>
+    <string name="driver_damage_sum">Summe</string>
+    <string name="driver_when_should_it_start">Wann soll es losgehen?</string>
+    <string name="driver_insurance_start_date">Versichert ab</string>
+    <string name="driver_payment_interval">Zahlungsintervall</string>
+    <string name="driver_payment_interval_annual">Jährlich</string>
+    <string name="driver_payment_interval_semiannual">Halbjährlich</string>
+    <string name="driver_payment_interval_monthly">Monatlich</string>
+    <string name="driver_view_recommendation">Unsere Empfehlung ansehen</string>
     <string name="driver_configuration_load_error">Die Auswahlmöglichkeiten konnten nicht geladen werden.</string>
 </resources>

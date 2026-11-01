@@ -33,14 +33,21 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun CarDetails(
     car: Car,
-    onSelected: () -> Unit,
+    carDetailsMode: CarDetailsMode = CarDetailsMode.NonSelectable,
 ) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 6.dp)
-            .clickable(
-                onClick = onSelected,
+            .then(
+        when(carDetailsMode) {
+                    is CarDetailsMode.Selectable -> {
+                        Modifier.clickable(
+                            onClick = { carDetailsMode.onSelected(car) },
+                        )
+                    }
+                    is CarDetailsMode.NonSelectable -> Modifier
+                }
             ),
         shape = RoundedCornerShape(16.dp),
 
@@ -53,10 +60,13 @@ fun CarDetails(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
             verticalAlignment = Alignment.Top,
         ) {
-            RadioButton(
-                selected = false,
-                onClick = null,
-            )
+            if (carDetailsMode is CarDetailsMode.Selectable) {
+                RadioButton(
+                    selected = false,
+                    onClick = null,
+                )
+            }
+
             Column(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(14.dp),
@@ -143,9 +153,17 @@ private fun String.toDisplayText(): String =
             word.replaceFirstChar { it.uppercase() }
         }
 
+sealed interface CarDetailsMode {
+    data class Selectable(
+        val onSelected: (car: Car) -> Unit,
+    ) : CarDetailsMode
+
+    data object NonSelectable : CarDetailsMode
+}
+
 @Preview
 @Composable
-private fun CarDetailsPreview() {
+private fun CarDetailsNonSelectablePreview() {
     CarDetails(
         car = Car(
             matriculationDate = 2020,
@@ -167,6 +185,36 @@ private fun CarDetailsPreview() {
             brand = "VW",
             eMobility = false,
         ),
-        onSelected = {},
+        carDetailsMode = CarDetailsMode.NonSelectable,
+    )
+}
+
+@Preview
+@Composable
+private fun CarDetailsSelectablePreview() {
+    CarDetails(
+        car = Car(
+            matriculationDate = 2020,
+            constructionStartYear = 2020,
+            catalogPrice = 63200,
+            etxCode = 102226758,
+            description = "Golf 2.0 TSI R DSG 4Motion",
+            capacity = 1998,
+            model = "GOLF VIII BENZIN 5 Türer Modell 2020-",
+            doors = 5,
+            seats = 5,
+            emptyLoad = 1569,
+            horsePower = 320,
+            enginePowerInKw = 235,
+            vehicleType = "PKW",
+            vehicleClass = 30003,
+            constructionType = "LIMOUSINE_SEDAN",
+            fuel = "BENZIN_BLEIFREI",
+            brand = "VW",
+            eMobility = false,
+        ),
+        carDetailsMode = CarDetailsMode.Selectable(
+            onSelected = {}
+        ),
     )
 }

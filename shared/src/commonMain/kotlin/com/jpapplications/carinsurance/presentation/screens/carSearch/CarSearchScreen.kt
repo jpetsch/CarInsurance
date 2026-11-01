@@ -24,6 +24,7 @@ import carinsurance.shared.generated.resources.Res
 import carinsurance.shared.generated.resources.year_error
 import carinsurance.shared.generated.resources.year_label
 import com.jpapplications.carinsurance.presentation.components.CarDetails
+import com.jpapplications.carinsurance.presentation.components.CarDetailsMode
 import com.jpapplications.carinsurance.presentation.components.SearchDropdown
 import org.jetbrains.compose.resources.stringResource
 
@@ -81,9 +82,11 @@ fun CarSearchScreen(
                 items(carGroup.value) { car ->
                     CarDetails(
                         car = car,
-                        onSelected = {
-                            onEvent(CarSearchViewModel.CarSearchEvent.CarEntrySelected(car.etxCode))
-                        },
+                        carDetailsMode = CarDetailsMode.Selectable(
+                            onSelected = {
+                                onEvent(CarSearchViewModel.CarSearchEvent.CarEntrySelected(car.etxCode))
+                            }
+                        ),
                     )
                 }
             }

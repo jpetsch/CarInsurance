@@ -2,6 +2,7 @@ package com.jpapplications.carinsurance.data.datasource
 
 import com.jpapplications.carinsurance.data.model.CarDto
 import com.jpapplications.carinsurance.data.model.CarSearchRequestDto
+import com.jpapplications.carinsurance.data.model.OfferConfigurationDto
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -25,5 +26,10 @@ class CarInsuranceService(
         httpClient.get {
             url("$baseUrl/api/v1/car/vehicle/model")
             parameter("etxCode", etxCode)
+        }.body()
+
+    suspend fun offerConfiguration(): OfferConfigurationDto =
+        httpClient.get {
+            url("$baseUrl/api/v1/car/offer/config")
         }.body()
 }

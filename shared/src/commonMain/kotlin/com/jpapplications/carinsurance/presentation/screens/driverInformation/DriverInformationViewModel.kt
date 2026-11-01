@@ -3,7 +3,10 @@ package com.jpapplications.carinsurance.presentation.screens.driverInformation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jpapplications.carinsurance.domain.model.Car
+import com.jpapplications.carinsurance.domain.model.OfferConfiguration
+import com.jpapplications.carinsurance.domain.model.OfferConfigurationResult
 import com.jpapplications.carinsurance.domain.model.VehicleModelResult
+import com.jpapplications.carinsurance.domain.usecase.GetOfferConfigurationUseCase
 import com.jpapplications.carinsurance.domain.usecase.GetVehicleModelUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -14,12 +17,14 @@ import kotlinx.coroutines.launch
 class DriverInformationViewModel(
     private val etxCode: Int,
     private val getVehicleModelUseCase: GetVehicleModelUseCase,
+    private val getOfferConfigurationUseCase: GetOfferConfigurationUseCase,
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(DriverInformationUiState())
     val uiState: StateFlow<DriverInformationUiState> = _uiState.asStateFlow()
 
     init {
         loadCarDetails()
+        loadOfferConfiguration()
     }
 
     sealed interface DriverInformationEvent {
@@ -44,8 +49,24 @@ class DriverInformationViewModel(
         }
     }
 
+    private fun loadOfferConfiguration() {
+        viewModelScope.launch {
+            when (val result = getOfferConfigurationUseCase()) {
+                is OfferConfigurationResult.Success -> {
+                    _uiState.update { currentState ->
+                        currentState.copy(
+                            offerConfiguration = result.configuration,
+                        )
+                    }
+                }
+                is OfferConfigurationResult.Failure -> TODO("Not yet implemented")
+            }
+        }
+    }
+
 }
 
 data class DriverInformationUiState(
     val car: Car? = null,
+    val offerConfiguration: OfferConfiguration? = null,
 )

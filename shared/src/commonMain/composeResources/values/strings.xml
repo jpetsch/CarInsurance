@@ -54,4 +54,10 @@
     <string name="driver_recommendation_input_error">Bitte vervollständige alle erforderlichen Angaben, bevor du die Empfehlung anforderst.</string>
     <string name="driver_recommendation_error">Die Empfehlung konnte nicht geladen werden. Bitte versuche es erneut.</string>
     <string name="driver_recommendation_premium">Gesamtprämie: %1$s CHF</string>
+    <string name="recommendation_title">Deine Empfehlung</string>
+    <string name="recommendation_premium">Gesamtprämie</string>
+    <string name="recommendation_premium_value">%1$s CHF</string>
+    <string name="recommendation_coverage_liability">Haftpflicht</string>
+    <string name="recommendation_coverage_comprehensive">Kasko</string>
+    <string name="recommendation_coverage_accident">Insassenunfall</string>
 </resources>

@@ -74,11 +74,7 @@ private fun RecommendationDriver.toDto() =
 internal fun CarRecommendationDto.toDomain() =
     CarRecommendation(
         gesamtBruttoPraemie = gesamtBruttoPraemie,
-        metaData = metaData,
-        krf = krf,
-        abTestDtos = abTestDtos,
         haftpflicht = haftpflicht,
         kasko = kasko,
         insassenUnfallDto = insassenUnfallDto,
-        assistance = assistance,
     )

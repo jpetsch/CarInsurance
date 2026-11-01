@@ -23,6 +23,8 @@ import com.jpapplications.carinsurance.presentation.screens.carSearch.CarSearchS
 import com.jpapplications.carinsurance.presentation.screens.carSearch.CarSearchViewModel
 import com.jpapplications.carinsurance.presentation.screens.driverInformation.DriverInformationScreen
 import com.jpapplications.carinsurance.presentation.screens.driverInformation.DriverInformationViewModel
+import com.jpapplications.carinsurance.presentation.screens.recommendation.RecommendationScreen
+import com.jpapplications.carinsurance.presentation.screens.recommendation.RecommendationViewModel
 import io.ktor.http.parametersOf
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.modules.SerializersModule
@@ -95,7 +97,27 @@ fun NavigationRoot(modifier: Modifier = Modifier) {
                         val uiState by viewModel.uiState.collectAsStateWithLifecycle()
                         val onEvent = viewModel::onEvent
 
+
+                        LaunchedEffect(Unit) {
+                            viewModel.showRecommendationEvent.collect { carRecommendation ->
+                                backStack.add(Route.Recommendation(carRecommendation))
+                            }
+                        }
+
                         DriverInformationScreen(
+                            uiState = uiState,
+                            onEvent = onEvent,
+                        )
+                    }
+
+                    entry<Route.Recommendation> {
+                        val viewModel: RecommendationViewModel = koinViewModel(
+                            parameters = { parametersOf(it.carRecommendation) }
+                        )
+                        val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+                        val onEvent = viewModel::onEvent
+
+                        RecommendationScreen(
                             uiState = uiState,
                             onEvent = onEvent,
                         )

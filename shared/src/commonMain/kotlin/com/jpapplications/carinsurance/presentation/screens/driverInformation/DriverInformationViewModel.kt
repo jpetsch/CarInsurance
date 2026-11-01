@@ -20,8 +20,11 @@ import com.jpapplications.carinsurance.domain.usecase.GetOfferConfigurationUseCa
 import com.jpapplications.carinsurance.domain.usecase.GetVehicleModelUseCase
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -38,6 +41,8 @@ class DriverInformationViewModel(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(DriverInformationUiState())
     val uiState: StateFlow<DriverInformationUiState> = _uiState.asStateFlow()
+    private val _showRecommendationEvent: MutableSharedFlow<CarRecommendation> = MutableSharedFlow()
+    val showRecommendationEvent: SharedFlow<CarRecommendation> = _showRecommendationEvent.asSharedFlow()
     private var postalCodeLookupJob: Job? = null
     private var additionalPostalCodeLookupJob: Job? = null
 
@@ -195,7 +200,6 @@ class DriverInformationViewModel(
                     isRecommendationLoading = true,
                     recommendationError = null,
                     hasRecommendationInputError = false,
-                    recommendation = null,
                 )
             }
 
@@ -223,13 +227,16 @@ class DriverInformationViewModel(
             }
 
             when (val result = getCarRecommendationUseCase(request)) {
-                is CarRecommendationResult.Success ->
+                is CarRecommendationResult.Success -> {
                     _uiState.update {
                         it.copy(
                             isRecommendationLoading = false,
-                            recommendation = result.recommendation,
                         )
                     }
+
+                    _showRecommendationEvent.emit(result.recommendation)
+                }
+
                 is CarRecommendationResult.Failure ->
                     _uiState.update {
                         it.copy(
@@ -543,7 +550,6 @@ data class DriverInformationUiState(
     val insuranceStartDate: String = "",
     val paymentInterval: String? = null,
     val isRecommendationLoading: Boolean = false,
-    val recommendation: CarRecommendation? = null,
     val recommendationError: NetworkError? = null,
     val hasRecommendationInputError: Boolean = false,
 )

@@ -1,5 +1,6 @@
 package com.jpapplications.carinsurance.domain.model
 
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.JsonObject
 
 data class CarRecommendationRequest(
@@ -40,15 +41,12 @@ sealed interface CityLookupResult {
     data class Failure(val error: NetworkError) : CityLookupResult
 }
 
+@Serializable
 data class CarRecommendation(
     val gesamtBruttoPraemie: Double,
-    val metaData: JsonObject,
-    val krf: String,
-    val abTestDtos: List<JsonObject>? = null,
     val haftpflicht: JsonObject? = null,
     val kasko: JsonObject? = null,
     val insassenUnfallDto: JsonObject? = null,
-    val assistance: Boolean? = null,
 )
 
 sealed interface CarRecommendationResult {

@@ -7,6 +7,7 @@ import com.jpapplications.carinsurance.data.repository.CityRepositoryImpl
 import com.jpapplications.carinsurance.data.repository.CarSearchRepositoryImpl
 import com.jpapplications.carinsurance.data.repository.OfferConfigurationRepositoryImpl
 import com.jpapplications.carinsurance.data.repository.VehicleModelRepositoryImpl
+import com.jpapplications.carinsurance.domain.model.CarRecommendation
 import com.jpapplications.carinsurance.domain.repository.CarRecommendationRepository
 import com.jpapplications.carinsurance.domain.repository.CityRepository
 import com.jpapplications.carinsurance.domain.repository.CarSearchRepository
@@ -19,11 +20,18 @@ import com.jpapplications.carinsurance.domain.usecase.GetVehicleModelUseCase
 import com.jpapplications.carinsurance.domain.usecase.SearchCarsUseCase
 import com.jpapplications.carinsurance.presentation.screens.carSearch.CarSearchViewModel
 import com.jpapplications.carinsurance.presentation.screens.driverInformation.DriverInformationViewModel
+import com.jpapplications.carinsurance.presentation.screens.recommendation.RecommendationViewModel
 import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 val appModule = module {
+    viewModel { (carRecommendation: CarRecommendation) ->
+        RecommendationViewModel(
+            recommendation = carRecommendation,
+        )
+    }
+
     viewModel { (etxCode: Int) ->
         DriverInformationViewModel(
             etxCode = etxCode,

@@ -2,20 +2,22 @@ package com.jpapplications.carinsurance.data.model
 
 import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.JsonObject
 
 @Serializable
 data class CarRecommendationRequestDto(
     @EncodeDefault(EncodeDefault.Mode.ALWAYS)
-    val rabattRelevanteDaten: JsonObject = JsonObject(emptyMap()),
+    val rabattRelevanteDaten: RecommendationDiscountDataDto = RecommendationDiscountDataDto(),
     val versicherungsBeginn: String,
     val zahlungsintervall: String,
     val halterTyp: String,
     val fahrzeug: RecommendationVehicleDto,
     val fahrzeugLenker: RecommendationDriverDto,
     @EncodeDefault(EncodeDefault.Mode.NEVER)
-    val abTestDtos: List<JsonObject>? = null,
+    val abTestDtos: List<RecommendationAbTestDto>? = null,
 )
+
+@Serializable
+class RecommendationDiscountDataDto
 
 @Serializable
 data class RecommendationVehicleDto(
@@ -47,8 +49,23 @@ data class RecommendationDriverDto(
     val geschlecht: String,
     val geburtsdatum: String,
     val nationalitaet: String,
-    val stadt: JsonObject,
+    val stadt: RecommendationCityDto,
     val jahrFahrpruefungPkw: Int,
     @EncodeDefault(EncodeDefault.Mode.ALWAYS)
-    val schadensfaelle: List<JsonObject> = emptyList(),
+    val schadensfaelle: List<RecommendationClaimDto> = emptyList(),
+)
+
+@Serializable
+data class RecommendationCityDto(
+    val plz: Int,
+    val name: String,
+    val kanton: String,
+)
+
+@Serializable
+data class RecommendationClaimDto(
+    val schadensfallTyp: String,
+    val schadenfallYear: Int,
+    val schadensfallSchuld: String,
+    val summe: Double,
 )

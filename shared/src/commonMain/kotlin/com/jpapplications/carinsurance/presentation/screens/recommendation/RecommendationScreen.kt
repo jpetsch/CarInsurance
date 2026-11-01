@@ -2,7 +2,6 @@ package com.jpapplications.carinsurance.presentation.screens.recommendation
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,17 +19,39 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import carinsurance.shared.generated.resources.Res
+import carinsurance.shared.generated.resources.recommendation_accident_daily_allowance
+import carinsurance.shared.generated.resources.recommendation_accident_death_capital
+import carinsurance.shared.generated.resources.recommendation_accident_disability_capital
+import carinsurance.shared.generated.resources.recommendation_accident_healing_costs
+import carinsurance.shared.generated.resources.recommendation_accident_hospital_allowance
+import carinsurance.shared.generated.resources.recommendation_accident_pets
+import carinsurance.shared.generated.resources.recommendation_accident_person_group
+import carinsurance.shared.generated.resources.recommendation_boolean_no
+import carinsurance.shared.generated.resources.recommendation_boolean_yes
 import carinsurance.shared.generated.resources.recommendation_coverage_accident
 import carinsurance.shared.generated.resources.recommendation_coverage_comprehensive
 import carinsurance.shared.generated.resources.recommendation_coverage_liability
+import carinsurance.shared.generated.resources.recommendation_hull_compensation
+import carinsurance.shared.generated.resources.recommendation_hull_full_deductible
+import carinsurance.shared.generated.resources.recommendation_hull_glass
+import carinsurance.shared.generated.resources.recommendation_hull_bonus_protection
+import carinsurance.shared.generated.resources.recommendation_hull_bonus_malus_level
+import carinsurance.shared.generated.resources.recommendation_hull_bonus_malus_percent
+import carinsurance.shared.generated.resources.recommendation_hull_personal_effects
+import carinsurance.shared.generated.resources.recommendation_hull_product
+import carinsurance.shared.generated.resources.recommendation_hull_park_damage
+import carinsurance.shared.generated.resources.recommendation_hull_partial_deductible
+import carinsurance.shared.generated.resources.recommendation_liability_bonus_protection
+import carinsurance.shared.generated.resources.recommendation_liability_bonus_malus_level
+import carinsurance.shared.generated.resources.recommendation_liability_bonus_malus_percent
+import carinsurance.shared.generated.resources.recommendation_liability_deductible
+import carinsurance.shared.generated.resources.recommendation_liability_gross_negligence
 import carinsurance.shared.generated.resources.recommendation_premium
 import carinsurance.shared.generated.resources.recommendation_premium_value
 import carinsurance.shared.generated.resources.recommendation_title
-import kotlinx.serialization.json.JsonArray
-import kotlinx.serialization.json.JsonElement
-import kotlinx.serialization.json.JsonNull
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.JsonPrimitive
+import com.jpapplications.carinsurance.domain.model.RecommendationHull
+import com.jpapplications.carinsurance.domain.model.RecommendationLiability
+import com.jpapplications.carinsurance.domain.model.RecommendationPassengerAccident
 import org.jetbrains.compose.resources.stringResource
 import kotlin.math.abs
 import kotlin.math.roundToLong
@@ -58,24 +79,9 @@ fun RecommendationScreen(
 
         PremiumCard(recommendation.gesamtBruttoPraemie)
 
-        recommendation.haftpflicht?.let {
-            CoverageCard(
-                title = stringResource(Res.string.recommendation_coverage_liability),
-                details = it,
-            )
-        }
-        recommendation.kasko?.let {
-            CoverageCard(
-                title = stringResource(Res.string.recommendation_coverage_comprehensive),
-                details = it,
-            )
-        }
-        recommendation.insassenUnfallDto?.let {
-            CoverageCard(
-                title = stringResource(Res.string.recommendation_coverage_accident),
-                details = it,
-            )
-        }
+        recommendation.haftpflicht?.let { LiabilityCard(it) }
+        recommendation.kasko?.let { HullCard(it) }
+        recommendation.insassenUnfallDto?.let { PassengerAccidentCard(it) }
     }
 }
 
@@ -106,12 +112,104 @@ private fun PremiumCard(premium: Double) {
 }
 
 @Composable
+private fun LiabilityCard(liability: RecommendationLiability) {
+    CoverageCard(stringResource(Res.string.recommendation_coverage_liability)) {
+        Detail(
+            stringResource(Res.string.recommendation_liability_bonus_protection),
+            liability.bonusschutz.toYesNo(),
+        )
+        Detail(
+            stringResource(Res.string.recommendation_liability_gross_negligence),
+            liability.gfverzicht.toYesNo(),
+        )
+        Detail(
+            stringResource(Res.string.recommendation_liability_bonus_malus_level),
+            liability.bonusMalusStufe.toString(),
+        )
+        Detail(
+            stringResource(Res.string.recommendation_liability_bonus_malus_percent),
+            "${liability.bonusMalusProzent} %",
+        )
+        Detail(
+            stringResource(Res.string.recommendation_liability_deductible),
+            "${liability.haftpflichtSelbstbehalt} CHF",
+        )
+    }
+}
+
+@Composable
+private fun HullCard(hull: RecommendationHull) {
+    CoverageCard(stringResource(Res.string.recommendation_coverage_comprehensive)) {
+        Detail(stringResource(Res.string.recommendation_hull_product), hull.kaskoArt)
+        Detail(
+            stringResource(Res.string.recommendation_hull_full_deductible),
+            "${hull.vollkaskoSelbstbehalt} CHF",
+        )
+        Detail(
+            stringResource(Res.string.recommendation_hull_partial_deductible),
+            "${hull.teilkaskoSelbstbehalt} CHF",
+        )
+        Detail(stringResource(Res.string.recommendation_hull_compensation), hull.entschaedigungsart)
+        Detail(stringResource(Res.string.recommendation_hull_park_damage), hull.parkschaeden)
+        Detail(stringResource(Res.string.recommendation_hull_glass), hull.kaskoGlasbruch)
+        Detail(
+            stringResource(Res.string.recommendation_hull_bonus_protection),
+            hull.bonusschutz.toYesNo(),
+        )
+        Detail(
+            stringResource(Res.string.recommendation_hull_personal_effects),
+            hull.persoenlicheEffekten,
+        )
+        Detail(
+            stringResource(Res.string.recommendation_hull_bonus_malus_level),
+            hull.bonusMalusStufe.toString(),
+        )
+        Detail(
+            stringResource(Res.string.recommendation_hull_bonus_malus_percent),
+            "${hull.bonusMalusProzent} %",
+        )
+    }
+}
+
+@Composable
+private fun PassengerAccidentCard(accident: RecommendationPassengerAccident) {
+    CoverageCard(stringResource(Res.string.recommendation_coverage_accident)) {
+        Detail(
+            stringResource(Res.string.recommendation_accident_person_group),
+            accident.insassenUnfallPersonenkreis,
+        )
+        Detail(
+            stringResource(Res.string.recommendation_accident_hospital_allowance),
+            "${accident.spitaltaggeld} CHF",
+        )
+        Detail(
+            stringResource(Res.string.recommendation_accident_daily_allowance),
+            "${accident.taggeld} CHF",
+        )
+        Detail(
+            stringResource(Res.string.recommendation_accident_healing_costs),
+            accident.heilungskosten.toYesNo(),
+        )
+        Detail(
+            stringResource(Res.string.recommendation_accident_disability_capital),
+            "${accident.invaliditaetskapital} CHF",
+        )
+        Detail(
+            stringResource(Res.string.recommendation_accident_death_capital),
+            "${accident.todesfallkapital} CHF",
+        )
+        Detail(
+            stringResource(Res.string.recommendation_accident_pets),
+            accident.haustiere,
+        )
+    }
+}
+
+@Composable
 private fun CoverageCard(
     title: String,
-    details: JsonObject,
+    content: @Composable () -> Unit,
 ) {
-    if (details.isEmpty()) return
-
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
@@ -123,79 +221,27 @@ private fun CoverageCard(
         ) {
             Text(title, style = MaterialTheme.typography.titleMedium)
             HorizontalDivider()
-            JsonObjectDetails(details)
+            content()
         }
     }
 }
 
 @Composable
-private fun JsonObjectDetails(details: JsonObject) {
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        details.forEach { (key, value) ->
-            JsonValueDetail(
-                label = key.toDisplayLabel(),
-                value = value,
-            )
-        }
-    }
-}
-
-@Composable
-private fun JsonValueDetail(
+private fun Detail(
     label: String,
-    value: JsonElement,
+    value: String,
 ) {
-    if (value == JsonNull) return
-
-    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-        when (value) {
-            is JsonObject -> {
-                Text(label, style = MaterialTheme.typography.labelLarge)
-                JsonObjectDetails(value)
-            }
-            is JsonArray -> {
-                Text(label, style = MaterialTheme.typography.labelLarge)
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    value.forEachIndexed { index, item ->
-                        if (item != JsonNull) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            ) {
-                                Text(
-                                    text = "${index + 1}.",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                )
-                                Column(modifier = Modifier.weight(1f)) {
-                                    when (item) {
-                                        is JsonObject -> JsonObjectDetails(item)
-                                        is JsonArray -> JsonValueDetail(
-                                            label = "",
-                                            value = item,
-                                        )
-                                        is JsonPrimitive -> Text(
-                                            text = item.content,
-                                            style = MaterialTheme.typography.bodyMedium,
-                                        )
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-            is JsonPrimitive -> {
-                Text(label, style = MaterialTheme.typography.labelMedium)
-                Text(value.content, style = MaterialTheme.typography.bodyMedium)
-            }
-        }
+    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+        Text(label, style = MaterialTheme.typography.labelMedium)
+        Text(value, style = MaterialTheme.typography.bodyMedium)
     }
 }
 
-private fun String.toDisplayLabel(): String =
-    replace(Regex("([a-z0-9])([A-Z])"), "$1 $2")
-        .replace('_', ' ')
-        .replaceFirstChar { it.uppercase() }
+@Composable
+private fun Boolean.toYesNo(): String =
+    stringResource(
+        if (this) Res.string.recommendation_boolean_yes else Res.string.recommendation_boolean_no,
+    )
 
 private fun Double.formatSwissCurrency(): String {
     val minorUnits = (this * 100).roundToLong()

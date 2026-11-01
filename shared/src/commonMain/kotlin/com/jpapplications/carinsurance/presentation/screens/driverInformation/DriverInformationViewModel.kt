@@ -10,6 +10,7 @@ import com.jpapplications.carinsurance.domain.model.CityLookupResult
 import com.jpapplications.carinsurance.domain.model.NetworkError
 import com.jpapplications.carinsurance.domain.model.OfferConfiguration
 import com.jpapplications.carinsurance.domain.model.OfferConfigurationResult
+import com.jpapplications.carinsurance.domain.model.RecommendationClaim
 import com.jpapplications.carinsurance.domain.model.RecommendationCity
 import com.jpapplications.carinsurance.domain.model.RecommendationDriver
 import com.jpapplications.carinsurance.domain.model.RecommendationVehicle
@@ -28,8 +29,6 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.put
 import kotlin.time.Clock
 
 class DriverInformationViewModel(
@@ -294,12 +293,12 @@ class DriverInformationViewModel(
                 val fault = damageFault ?: return null
                 val sum = damageSum.replace(',', '.').toDoubleOrNull() ?: return null
                 listOf(
-                    buildJsonObject {
-                        put("schadensfallTyp", type)
-                        put("schadenfallYear", year)
-                        put("schadensfallSchuld", fault)
-                        put("summe", sum)
-                    },
+                    RecommendationClaim(
+                        schadensfallTyp = type,
+                        schadenfallYear = year,
+                        schadensfallSchuld = fault,
+                        summe = sum,
+                    ),
                 )
             } else {
                 emptyList()
@@ -330,7 +329,7 @@ class DriverInformationViewModel(
                         } else {
                             nationality.trim().uppercase()
                         },
-                    stadt = selectedCity.data,
+                    stadt = selectedCity,
                     jahrFahrpruefungPkw = licenseYear,
                     schadensfaelle = claims,
                 ),

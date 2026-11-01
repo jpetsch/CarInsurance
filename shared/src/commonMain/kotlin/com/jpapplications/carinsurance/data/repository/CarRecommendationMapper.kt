@@ -2,38 +2,68 @@ package com.jpapplications.carinsurance.data.repository
 
 import com.jpapplications.carinsurance.data.model.CarRecommendationDto
 import com.jpapplications.carinsurance.data.model.CarRecommendationRequestDto
+import com.jpapplications.carinsurance.data.model.RecommendationAbTestDto
+import com.jpapplications.carinsurance.data.model.RecommendationClaimDto
+import com.jpapplications.carinsurance.data.model.RecommendationCityDto
+import com.jpapplications.carinsurance.data.model.RecommendationDiscountDataDto
 import com.jpapplications.carinsurance.data.model.RecommendationDriverDto
+import com.jpapplications.carinsurance.data.model.RecommendationHullDto
+import com.jpapplications.carinsurance.data.model.RecommendationLiabilityDto
+import com.jpapplications.carinsurance.data.model.RecommendationMetaDataDto
+import com.jpapplications.carinsurance.data.model.RecommendationPassengerAccidentDto
 import com.jpapplications.carinsurance.data.model.RecommendationVehicleDto
 import com.jpapplications.carinsurance.domain.model.CarRecommendation
 import com.jpapplications.carinsurance.domain.model.CarRecommendationRequest
+import com.jpapplications.carinsurance.domain.model.RecommendationAbTest
+import com.jpapplications.carinsurance.domain.model.RecommendationClaim
 import com.jpapplications.carinsurance.domain.model.RecommendationCity
+import com.jpapplications.carinsurance.domain.model.RecommendationDiscountData
 import com.jpapplications.carinsurance.domain.model.RecommendationDriver
+import com.jpapplications.carinsurance.domain.model.RecommendationHull
+import com.jpapplications.carinsurance.domain.model.RecommendationLiability
+import com.jpapplications.carinsurance.domain.model.RecommendationMetaData
+import com.jpapplications.carinsurance.domain.model.RecommendationPassengerAccident
 import com.jpapplications.carinsurance.domain.model.RecommendationVehicle
-import kotlinx.serialization.json.JsonObject
-import kotlinx.serialization.json.JsonPrimitive
-import kotlinx.serialization.json.contentOrNull
 
-internal fun JsonObject.toRecommendationCity(): RecommendationCity? {
-    val name =
-        listOf("name", "city", "cityName", "ort", "ortschaft", "stadt", "gemeinde", "locality")
-            .firstNotNullOfOrNull { key ->
-                (this[key] as? JsonPrimitive)
-                    ?.takeIf { it.isString }
-                    ?.contentOrNull
-                    ?.takeIf(String::isNotBlank)
-            } ?: return null
-    return RecommendationCity(name = name, data = this)
-}
+internal fun RecommendationCityDto.toDomain() =
+    RecommendationCity(
+        plz = plz,
+        name = name,
+        kanton = kanton,
+    )
+
+private fun RecommendationCity.toDto() =
+    RecommendationCityDto(
+        plz = plz,
+        name = name,
+        kanton = kanton,
+    )
 
 internal fun CarRecommendationRequest.toDto() =
     CarRecommendationRequestDto(
-        rabattRelevanteDaten = rabattRelevanteDaten,
+        rabattRelevanteDaten = rabattRelevanteDaten.toDto(),
         versicherungsBeginn = versicherungsBeginn,
         zahlungsintervall = zahlungsintervall,
         halterTyp = halterTyp,
         fahrzeug = fahrzeug.toDto(),
         fahrzeugLenker = fahrzeugLenker.toDto(),
-        abTestDtos = abTestDtos,
+        abTestDtos = abTestDtos?.map(RecommendationAbTest::toDto),
+    )
+
+private fun RecommendationDiscountData.toDto() = RecommendationDiscountDataDto()
+
+private fun RecommendationAbTest.toDto() =
+    RecommendationAbTestDto(
+        jiraTicketId = jiraTicketId,
+        groupName = groupName,
+    )
+
+private fun RecommendationClaim.toDto() =
+    RecommendationClaimDto(
+        schadensfallTyp = schadensfallTyp,
+        schadenfallYear = schadenfallYear,
+        schadensfallSchuld = schadensfallSchuld,
+        summe = summe,
     )
 
 private fun RecommendationVehicle.toDto() =
@@ -66,15 +96,73 @@ private fun RecommendationDriver.toDto() =
         geschlecht = geschlecht,
         geburtsdatum = geburtsdatum,
         nationalitaet = nationalitaet,
-        stadt = stadt,
+        stadt = stadt.toDto(),
         jahrFahrpruefungPkw = jahrFahrpruefungPkw,
-        schadensfaelle = schadensfaelle,
+        schadensfaelle = schadensfaelle.map(RecommendationClaim::toDto),
+    )
+
+private fun RecommendationAbTestDto.toDomain() =
+    RecommendationAbTest(
+        jiraTicketId = jiraTicketId,
+        groupName = groupName,
+    )
+
+private fun RecommendationMetaDataDto.toDomain() =
+    RecommendationMetaData(
+        uwfLiability = uwfLiability,
+        cffLiability = cffLiability,
+        uwfAssistance = uwfAssistance,
+        cffAssistance = cffAssistance,
+        uwfHull = uwfHull,
+        cffHullTk = cffHullTk,
+        cffHullVk = cffHullVk,
+        uwfPassenger = uwfPassenger,
+        cffPassenger = cffPassenger,
+        keepOnChanges = keepOnChanges,
+    )
+
+private fun RecommendationLiabilityDto.toDomain() =
+    RecommendationLiability(
+        bonusschutz = bonusschutz,
+        gfverzicht = gfverzicht,
+        bonusMalusStufe = bonusMalusStufe,
+        bonusMalusProzent = bonusMalusProzent,
+        haftpflichtSelbstbehalt = haftpflichtSelbstbehalt,
+    )
+
+private fun RecommendationHullDto.toDomain() =
+    RecommendationHull(
+        kaskoArt = kaskoArt,
+        vollkaskoSelbstbehalt = vollkaskoSelbstbehalt,
+        teilkaskoSelbstbehalt = teilkaskoSelbstbehalt,
+        entschaedigungsart = entschaedigungsart,
+        parkschaeden = parkschaeden,
+        kaskoGlasbruch = kaskoGlasbruch,
+        bonusschutz = bonusschutz,
+        persoenlicheEffekten = persoenlicheEffekten,
+        bonusMalusStufe = bonusMalusStufe,
+        bonusMalusProzent = bonusMalusProzent,
+    )
+
+private fun RecommendationPassengerAccidentDto.toDomain() =
+    RecommendationPassengerAccident(
+        insassenUnfallPersonenkreis = insassenUnfallPersonenkreis,
+        spitaltaggeld = spitaltaggeld,
+        taggeld = taggeld,
+        heilungskosten = heilungskosten,
+        invaliditaetskapital = invaliditaetskapital,
+        todesfallkapital = todesfallkapital,
+        haustiere = haustiere,
     )
 
 internal fun CarRecommendationDto.toDomain() =
     CarRecommendation(
         gesamtBruttoPraemie = gesamtBruttoPraemie,
-        haftpflicht = haftpflicht,
-        kasko = kasko,
-        insassenUnfallDto = insassenUnfallDto,
+        metaData = metaData.toDomain(),
+        krf = krf,
+        abTestDtos = abTestDtos?.map(RecommendationAbTestDto::toDomain),
+        haftpflicht = haftpflicht?.toDomain(),
+        kasko = kasko?.toDomain(),
+        insassenUnfallDto = insassenUnfallDto?.toDomain(),
+        assistance = assistance,
     )

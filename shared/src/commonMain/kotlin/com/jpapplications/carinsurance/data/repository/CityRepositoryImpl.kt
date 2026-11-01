@@ -16,7 +16,7 @@ class CityRepositoryImpl(
     override suspend fun getCity(postalCode: String): CityLookupResult {
         return try {
             val city =
-                service.cities(postalCode).firstOrNull()?.toRecommendationCity()
+                service.cities(postalCode).firstOrNull()?.toDomain()
                     ?: return CityLookupResult.Failure(NetworkError.INVALID_RESPONSE)
             CityLookupResult.Success(city)
         } catch (exception: CancellationException) {

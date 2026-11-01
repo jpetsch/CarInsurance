@@ -5,7 +5,7 @@ import com.jpapplications.carinsurance.data.model.CarRecommendationDto
 import com.jpapplications.carinsurance.data.model.CarRecommendationRequestDto
 import com.jpapplications.carinsurance.data.model.CarSearchRequestDto
 import com.jpapplications.carinsurance.data.model.OfferConfigurationDto
-import kotlinx.serialization.json.JsonObject
+import com.jpapplications.carinsurance.data.model.RecommendationCityDto
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.get
@@ -40,7 +40,7 @@ class CarInsuranceService(
             url("$baseUrl/api/v1/car/offer/config")
         }.body()
 
-    suspend fun cities(postalCode: String): List<JsonObject> =
+    suspend fun cities(postalCode: String): List<RecommendationCityDto> =
         httpClient.get {
             url("$baseUrl/api/v1/cities")
             parameter("zipcode", postalCode)

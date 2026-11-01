@@ -27,6 +27,7 @@ import carinsurance.shared.generated.resources.driver_recommendation_input_error
 import carinsurance.shared.generated.resources.driver_recommendation_error
 import carinsurance.shared.generated.resources.driver_recommendation_premium
 import carinsurance.shared.generated.resources.driver_vehicle_title
+import carinsurance.shared.generated.resources.driver_vehicle_load_error
 import carinsurance.shared.generated.resources.driver_view_recommendation
 import com.jpapplications.carinsurance.presentation.components.CarDetails
 import org.jetbrains.compose.resources.stringResource
@@ -49,6 +50,14 @@ fun DriverInformationScreen(
             text = stringResource(Res.string.driver_vehicle_title),
             style = MaterialTheme.typography.titleLarge,
         )
+
+        if (uiState.vehicleModelError != null) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = stringResource(Res.string.driver_vehicle_load_error),
+                color = MaterialTheme.colorScheme.error,
+            )
+        }
 
         Spacer(modifier = Modifier.height(8.dp))
         uiState.car?.let { car ->

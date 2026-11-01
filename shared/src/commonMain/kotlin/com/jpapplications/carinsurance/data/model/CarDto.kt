@@ -3,7 +3,7 @@ package com.jpapplications.carinsurance.data.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class CarDto(
+internal data class CarDto(
     val matriculationDate: Int,
     val constructionStartYear: Int,
     val catalogPrice: Int,

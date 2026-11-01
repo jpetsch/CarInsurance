@@ -340,17 +340,20 @@ internal fun InsuranceStartSection(
     )
 
     Spacer(modifier = Modifier.height(8.dp))
-    SelectionDropdown(
-        value = uiState.paymentInterval.orEmpty(),
-        options =
-            listOf(
-                stringResource(Res.string.driver_payment_interval_annual),
+    val paymentIntervals =
+        listOf(
+            PaymentInterval.ANNUAL to stringResource(Res.string.driver_payment_interval_annual),
+            PaymentInterval.SEMIANNUAL to
                 stringResource(Res.string.driver_payment_interval_semiannual),
-                stringResource(Res.string.driver_payment_interval_monthly),
-            ),
+            PaymentInterval.MONTHLY to stringResource(Res.string.driver_payment_interval_monthly),
+        )
+    SelectionDropdown(
+        value = paymentIntervals.firstOrNull { it.first == uiState.paymentInterval }?.second.orEmpty(),
+        options = paymentIntervals.map { it.second },
         label = stringResource(Res.string.driver_payment_interval),
         onOptionSelected = {
-            onEvent(DriverInformationViewModel.DriverInformationEvent.PaymentIntervalChanged(it))
+            val interval = paymentIntervals.first { option -> option.second == it }.first
+            onEvent(DriverInformationViewModel.DriverInformationEvent.PaymentIntervalChanged(interval))
         },
     )
 }

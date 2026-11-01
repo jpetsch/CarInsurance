@@ -10,7 +10,7 @@ import kotlinx.io.IOException
 import kotlinx.serialization.SerializationException
 import kotlin.coroutines.cancellation.CancellationException
 
-class OfferConfigurationRepositoryImpl(
+internal class OfferConfigurationRepositoryImpl(
     private val service: CarInsuranceService,
 ) : OfferConfigurationRepository {
     override suspend fun getOfferConfiguration(): OfferConfigurationResult {

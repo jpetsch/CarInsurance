@@ -16,7 +16,7 @@ import io.ktor.client.request.url
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 
-class CarInsuranceService(
+internal class CarInsuranceService(
     private val httpClient: HttpClient,
 ) {
     private val baseUrl = "https://app.int.smile-insurances.ch"

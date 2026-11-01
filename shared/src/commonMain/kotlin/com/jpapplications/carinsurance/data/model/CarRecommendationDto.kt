@@ -3,7 +3,7 @@ package com.jpapplications.carinsurance.data.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class CarRecommendationDto(
+internal data class CarRecommendationDto(
     val gesamtBruttoPraemie: Double,
     val metaData: RecommendationMetaDataDto,
     val krf: String,
@@ -15,7 +15,7 @@ data class CarRecommendationDto(
 )
 
 @Serializable
-data class RecommendationMetaDataDto(
+internal data class RecommendationMetaDataDto(
     val uwfLiability: String,
     val cffLiability: String,
     val uwfAssistance: String,
@@ -29,13 +29,13 @@ data class RecommendationMetaDataDto(
 )
 
 @Serializable
-data class RecommendationAbTestDto(
+internal data class RecommendationAbTestDto(
     val jiraTicketId: String,
     val groupName: String,
 )
 
 @Serializable
-data class RecommendationLiabilityDto(
+internal data class RecommendationLiabilityDto(
     val bonusschutz: Boolean,
     val gfverzicht: Boolean,
     val bonusMalusStufe: Int,
@@ -44,7 +44,7 @@ data class RecommendationLiabilityDto(
 )
 
 @Serializable
-data class RecommendationHullDto(
+internal data class RecommendationHullDto(
     val kaskoArt: String,
     val vollkaskoSelbstbehalt: Int,
     val teilkaskoSelbstbehalt: Int,
@@ -58,7 +58,7 @@ data class RecommendationHullDto(
 )
 
 @Serializable
-data class RecommendationPassengerAccidentDto(
+internal data class RecommendationPassengerAccidentDto(
     val insassenUnfallPersonenkreis: String,
     val spitaltaggeld: Int,
     val taggeld: Int,

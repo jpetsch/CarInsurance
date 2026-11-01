@@ -26,6 +26,7 @@ import carinsurance.shared.generated.resources.recommendation_accident_healing_c
 import carinsurance.shared.generated.resources.recommendation_accident_hospital_allowance
 import carinsurance.shared.generated.resources.recommendation_accident_pets
 import carinsurance.shared.generated.resources.recommendation_accident_person_group
+import carinsurance.shared.generated.resources.recommendation_currency_value
 import carinsurance.shared.generated.resources.recommendation_boolean_no
 import carinsurance.shared.generated.resources.recommendation_boolean_yes
 import carinsurance.shared.generated.resources.recommendation_coverage_accident
@@ -41,6 +42,16 @@ import carinsurance.shared.generated.resources.recommendation_hull_personal_effe
 import carinsurance.shared.generated.resources.recommendation_hull_product
 import carinsurance.shared.generated.resources.recommendation_hull_park_damage
 import carinsurance.shared.generated.resources.recommendation_hull_partial_deductible
+import carinsurance.shared.generated.resources.recommendation_percent_value
+import carinsurance.shared.generated.resources.recommendation_unknown_value
+import carinsurance.shared.generated.resources.recommendation_value_all_persons
+import carinsurance.shared.generated.resources.recommendation_value_basic
+import carinsurance.shared.generated.resources.recommendation_value_full_comprehensive
+import carinsurance.shared.generated.resources.recommendation_value_insured_1000
+import carinsurance.shared.generated.resources.recommendation_value_insured_2000
+import carinsurance.shared.generated.resources.recommendation_value_partial_comprehensive
+import carinsurance.shared.generated.resources.recommendation_value_plus
+import carinsurance.shared.generated.resources.recommendation_value_pets_3500
 import carinsurance.shared.generated.resources.recommendation_liability_bonus_protection
 import carinsurance.shared.generated.resources.recommendation_liability_bonus_malus_level
 import carinsurance.shared.generated.resources.recommendation_liability_bonus_malus_percent
@@ -128,11 +139,11 @@ private fun LiabilityCard(liability: RecommendationLiability) {
         )
         Detail(
             stringResource(Res.string.recommendation_liability_bonus_malus_percent),
-            "${liability.bonusMalusProzent} %",
+            stringResource(Res.string.recommendation_percent_value, liability.bonusMalusProzent),
         )
         Detail(
             stringResource(Res.string.recommendation_liability_deductible),
-            "${liability.haftpflichtSelbstbehalt} CHF",
+            stringResource(Res.string.recommendation_currency_value, liability.haftpflichtSelbstbehalt),
         )
     }
 }
@@ -140,25 +151,37 @@ private fun LiabilityCard(liability: RecommendationLiability) {
 @Composable
 private fun HullCard(hull: RecommendationHull) {
     CoverageCard(stringResource(Res.string.recommendation_coverage_comprehensive)) {
-        Detail(stringResource(Res.string.recommendation_hull_product), hull.kaskoArt)
+        Detail(
+            stringResource(Res.string.recommendation_hull_product),
+            hull.kaskoArt.toLocalizedRecommendationValue(),
+        )
         Detail(
             stringResource(Res.string.recommendation_hull_full_deductible),
-            "${hull.vollkaskoSelbstbehalt} CHF",
+            stringResource(Res.string.recommendation_currency_value, hull.vollkaskoSelbstbehalt),
         )
         Detail(
             stringResource(Res.string.recommendation_hull_partial_deductible),
-            "${hull.teilkaskoSelbstbehalt} CHF",
+            stringResource(Res.string.recommendation_currency_value, hull.teilkaskoSelbstbehalt),
         )
-        Detail(stringResource(Res.string.recommendation_hull_compensation), hull.entschaedigungsart)
-        Detail(stringResource(Res.string.recommendation_hull_park_damage), hull.parkschaeden)
-        Detail(stringResource(Res.string.recommendation_hull_glass), hull.kaskoGlasbruch)
+        Detail(
+            stringResource(Res.string.recommendation_hull_compensation),
+            hull.entschaedigungsart.toLocalizedRecommendationValue(),
+        )
+        Detail(
+            stringResource(Res.string.recommendation_hull_park_damage),
+            hull.parkschaeden.toLocalizedRecommendationValue(),
+        )
+        Detail(
+            stringResource(Res.string.recommendation_hull_glass),
+            hull.kaskoGlasbruch.toLocalizedRecommendationValue(),
+        )
         Detail(
             stringResource(Res.string.recommendation_hull_bonus_protection),
             hull.bonusschutz.toYesNo(),
         )
         Detail(
             stringResource(Res.string.recommendation_hull_personal_effects),
-            hull.persoenlicheEffekten,
+            hull.persoenlicheEffekten.toLocalizedRecommendationValue(),
         )
         Detail(
             stringResource(Res.string.recommendation_hull_bonus_malus_level),
@@ -166,7 +189,7 @@ private fun HullCard(hull: RecommendationHull) {
         )
         Detail(
             stringResource(Res.string.recommendation_hull_bonus_malus_percent),
-            "${hull.bonusMalusProzent} %",
+            stringResource(Res.string.recommendation_percent_value, hull.bonusMalusProzent),
         )
     }
 }
@@ -176,15 +199,15 @@ private fun PassengerAccidentCard(accident: RecommendationPassengerAccident) {
     CoverageCard(stringResource(Res.string.recommendation_coverage_accident)) {
         Detail(
             stringResource(Res.string.recommendation_accident_person_group),
-            accident.insassenUnfallPersonenkreis,
+            accident.insassenUnfallPersonenkreis.toLocalizedRecommendationValue(),
         )
         Detail(
             stringResource(Res.string.recommendation_accident_hospital_allowance),
-            "${accident.spitaltaggeld} CHF",
+            stringResource(Res.string.recommendation_currency_value, accident.spitaltaggeld),
         )
         Detail(
             stringResource(Res.string.recommendation_accident_daily_allowance),
-            "${accident.taggeld} CHF",
+            stringResource(Res.string.recommendation_currency_value, accident.taggeld),
         )
         Detail(
             stringResource(Res.string.recommendation_accident_healing_costs),
@@ -192,15 +215,15 @@ private fun PassengerAccidentCard(accident: RecommendationPassengerAccident) {
         )
         Detail(
             stringResource(Res.string.recommendation_accident_disability_capital),
-            "${accident.invaliditaetskapital} CHF",
+            stringResource(Res.string.recommendation_currency_value, accident.invaliditaetskapital),
         )
         Detail(
             stringResource(Res.string.recommendation_accident_death_capital),
-            "${accident.todesfallkapital} CHF",
+            stringResource(Res.string.recommendation_currency_value, accident.todesfallkapital),
         )
         Detail(
             stringResource(Res.string.recommendation_accident_pets),
-            accident.haustiere,
+            accident.haustiere.toLocalizedRecommendationValue(),
         )
     }
 }
@@ -241,6 +264,22 @@ private fun Detail(
 private fun Boolean.toYesNo(): String =
     stringResource(
         if (this) Res.string.recommendation_boolean_yes else Res.string.recommendation_boolean_no,
+    )
+
+@Composable
+private fun String.toLocalizedRecommendationValue(): String =
+    stringResource(
+        when (uppercase()) {
+            "VOLLKASKO" -> Res.string.recommendation_value_full_comprehensive
+            "TEILKASKO" -> Res.string.recommendation_value_partial_comprehensive
+            "PLUS" -> Res.string.recommendation_value_plus
+            "INSURED_1000" -> Res.string.recommendation_value_insured_1000
+            "INSURED_2000" -> Res.string.recommendation_value_insured_2000
+            "BASIC" -> Res.string.recommendation_value_basic
+            "ALL" -> Res.string.recommendation_value_all_persons
+            "AMOUNT_3500" -> Res.string.recommendation_value_pets_3500
+            else -> Res.string.recommendation_unknown_value
+        },
     )
 
 private fun Double.formatSwissCurrency(): String {

@@ -103,6 +103,8 @@ class CarSearchViewModel(
         if (searchTerm.length !in 2..255) return
 
         val year = uiState.value.year.toIntOrNull()
+        if (year != null && !CarSearchCriteria.isValidYear(year)) return
+
         searchJob = viewModelScope.launch {
             delay(SEARCH_DEBOUNCE_MILLIS.milliseconds)
 

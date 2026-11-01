@@ -11,7 +11,7 @@ import kotlinx.io.IOException
 import kotlinx.serialization.SerializationException
 import kotlin.coroutines.cancellation.CancellationException
 
-class CarRecommendationRepositoryImpl(
+internal class CarRecommendationRepositoryImpl(
     private val service: CarInsuranceService,
 ) : CarRecommendationRepository {
     override suspend fun getRecommendation(

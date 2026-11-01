@@ -25,7 +25,7 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
-val appModule = module {
+internal val appModule = module {
     viewModel { (carRecommendation: CarRecommendation) ->
         RecommendationViewModel(
             recommendation = carRecommendation,

@@ -7,6 +7,7 @@
     <string name="search_request_error">Die Suchanfrage konnte nicht verarbeitet werden.</string>
     <string name="search_server_error">Der Suchdienst ist derzeit nicht verfügbar.</string>
     <string name="search_invalid_response_error">Der Suchdienst hat eine ungültige Antwort geliefert.</string>
+    <string name="driver_vehicle_load_error">Die Fahrzeugdaten konnten nicht geladen werden. Bitte gehe zurück und wähle das Fahrzeug erneut aus.</string>
     <string name="car_construction_type">Karosserie</string>
     <string name="car_power">Leistung</string>
     <string name="car_fuel">Kraftstoff</string>
@@ -56,7 +57,18 @@
     <string name="driver_recommendation_premium">Gesamtprämie: %1$s CHF</string>
     <string name="recommendation_title">Deine Empfehlung</string>
     <string name="recommendation_premium">Gesamtprämie</string>
-    <string name="recommendation_premium_value">%1$s CHF</string>
+    <string name="recommendation_premium_value">CHF %1$s</string>
+    <string name="recommendation_currency_value">CHF %1$d</string>
+    <string name="recommendation_percent_value">%1$d %</string>
+    <string name="recommendation_unknown_value">Nicht verfügbar</string>
+    <string name="recommendation_value_full_comprehensive">Vollkasko</string>
+    <string name="recommendation_value_partial_comprehensive">Teilkasko</string>
+    <string name="recommendation_value_plus">Plus</string>
+    <string name="recommendation_value_insured_1000">Versichert bis CHF 1'000</string>
+    <string name="recommendation_value_insured_2000">Versichert bis CHF 2'000</string>
+    <string name="recommendation_value_basic">Basis</string>
+    <string name="recommendation_value_all_persons">Alle Personen</string>
+    <string name="recommendation_value_pets_3500">Bis CHF 3'500</string>
     <string name="recommendation_coverage_liability">Haftpflicht</string>
     <string name="recommendation_coverage_comprehensive">Kasko</string>
     <string name="recommendation_coverage_accident">Insassenunfall</string>

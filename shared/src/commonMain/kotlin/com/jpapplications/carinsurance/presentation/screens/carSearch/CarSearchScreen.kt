@@ -11,9 +11,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,8 +21,13 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import carinsurance.shared.generated.resources.Res
+import carinsurance.shared.generated.resources.search_invalid_response_error
+import carinsurance.shared.generated.resources.search_network_error
+import carinsurance.shared.generated.resources.search_request_error
+import carinsurance.shared.generated.resources.search_server_error
 import carinsurance.shared.generated.resources.year_error
 import carinsurance.shared.generated.resources.year_label
+import com.jpapplications.carinsurance.domain.model.NetworkError
 import com.jpapplications.carinsurance.presentation.components.CarDetails
 import com.jpapplications.carinsurance.presentation.components.CarDetailsMode
 import com.jpapplications.carinsurance.presentation.components.SearchDropdown
@@ -53,9 +58,12 @@ fun CarSearchScreen(
             },
             label = { Text(stringResource(Res.string.year_label)) },
             isError = uiState.hasYearError,
-            supportingText = {
-                Text(stringResource(Res.string.year_error))
-            },
+            supportingText =
+                if (uiState.hasYearError) {
+                    { Text(stringResource(Res.string.year_error)) }
+                } else {
+                    null
+                },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             singleLine = true,
         )
@@ -72,6 +80,21 @@ fun CarSearchScreen(
                 onEvent(CarSearchViewModel.CarSearchEvent.CarSelected(it))
             }
         )
+
+        uiState.searchError?.let { error ->
+            val message =
+                when (error) {
+                    NetworkError.NETWORK -> stringResource(Res.string.search_network_error)
+                    NetworkError.REQUEST_REJECTED -> stringResource(Res.string.search_request_error)
+                    NetworkError.SERVER -> stringResource(Res.string.search_server_error)
+                    NetworkError.INVALID_RESPONSE ->
+                        stringResource(Res.string.search_invalid_response_error)
+                }
+            Text(
+                text = message,
+                color = MaterialTheme.colorScheme.error,
+            )
+        }
 
         uiState.selectedCarGroup?.let { carGroup ->
             LazyColumn(

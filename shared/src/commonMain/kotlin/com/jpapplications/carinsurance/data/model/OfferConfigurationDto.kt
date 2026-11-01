@@ -3,7 +3,7 @@ package com.jpapplications.carinsurance.data.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class OfferConfigurationDto(
+internal data class OfferConfigurationDto(
     val gender: List<String>,
     val schadensfallTyp: List<String>,
     val schadensfallSchuld: List<String>,

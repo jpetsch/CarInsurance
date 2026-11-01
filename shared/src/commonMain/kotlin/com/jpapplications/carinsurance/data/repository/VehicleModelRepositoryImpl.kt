@@ -10,7 +10,7 @@ import kotlinx.io.IOException
 import kotlinx.serialization.SerializationException
 import kotlin.coroutines.cancellation.CancellationException
 
-class VehicleModelRepositoryImpl(
+internal class VehicleModelRepositoryImpl(
     private val service: CarInsuranceService,
 ) : VehicleModelRepository {
     override suspend fun getVehicleModel(etxCode: Int): VehicleModelResult {

@@ -13,7 +13,7 @@ import kotlinx.io.IOException
 import kotlinx.serialization.SerializationException
 import kotlin.coroutines.cancellation.CancellationException
 
-class CarSearchRepositoryImpl(
+internal class CarSearchRepositoryImpl(
     private val service: CarInsuranceService,
 ) : CarSearchRepository {
     override suspend fun searchCars(criteria: CarSearchCriteria): CarSearchResult {

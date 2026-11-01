@@ -10,7 +10,7 @@ import kotlinx.io.IOException
 import kotlinx.serialization.SerializationException
 import kotlin.coroutines.cancellation.CancellationException
 
-class CityRepositoryImpl(
+internal class CityRepositoryImpl(
     private val service: CarInsuranceService,
 ) : CityRepository {
     override suspend fun getCity(postalCode: String): CityLookupResult {

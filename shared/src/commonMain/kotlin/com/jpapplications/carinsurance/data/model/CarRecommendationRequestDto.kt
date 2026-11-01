@@ -4,7 +4,7 @@ import kotlinx.serialization.EncodeDefault
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class CarRecommendationRequestDto(
+internal data class CarRecommendationRequestDto(
     @EncodeDefault(EncodeDefault.Mode.ALWAYS)
     val rabattRelevanteDaten: RecommendationDiscountDataDto = RecommendationDiscountDataDto(),
     val versicherungsBeginn: String,
@@ -17,10 +17,10 @@ data class CarRecommendationRequestDto(
 )
 
 @Serializable
-class RecommendationDiscountDataDto
+internal class RecommendationDiscountDataDto
 
 @Serializable
-data class RecommendationVehicleDto(
+internal data class RecommendationVehicleDto(
     val matriculationDate: Int,
     val constructionStartYear: Int,
     val catalogPrice: Int,
@@ -45,7 +45,7 @@ data class RecommendationVehicleDto(
 )
 
 @Serializable
-data class RecommendationDriverDto(
+internal data class RecommendationDriverDto(
     val geschlecht: String,
     val geburtsdatum: String,
     val nationalitaet: String,
@@ -56,14 +56,14 @@ data class RecommendationDriverDto(
 )
 
 @Serializable
-data class RecommendationCityDto(
+internal data class RecommendationCityDto(
     val plz: Int,
     val name: String,
     val kanton: String,
 )
 
 @Serializable
-data class RecommendationClaimDto(
+internal data class RecommendationClaimDto(
     val schadensfallTyp: String,
     val schadenfallYear: Int,
     val schadensfallSchuld: String,

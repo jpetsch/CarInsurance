@@ -70,7 +70,7 @@ class DriverInformationViewModel(
         data class DamageFaultChanged(val fault: String) : DriverInformationEvent
         data class DamageSumChanged(val sum: String) : DriverInformationEvent
         data class InsuranceStartDateChanged(val date: String) : DriverInformationEvent
-        data class PaymentIntervalChanged(val interval: String) : DriverInformationEvent
+        data class PaymentIntervalChanged(val interval: PaymentInterval) : DriverInformationEvent
         data object RecommendationRequested : DriverInformationEvent
     }
 
@@ -161,13 +161,18 @@ class DriverInformationViewModel(
                     _uiState.update { currentState ->
                         currentState.copy(
                             car = result.car,
+                            vehicleModelError = null,
                             newValueAccessoriesMinimum = result.car.newValueAccessoriesMinimum(),
                             newValueAccessories =
                                 result.car.newValueAccessoriesMinimum().toString(),
                         )
                     }
                 }
-                is VehicleModelResult.Failure -> TODO("Not yet implemented")
+                is VehicleModelResult.Failure -> {
+                    _uiState.update { currentState ->
+                        currentState.copy(vehicleModelError = result.error)
+                    }
+                }
             }
         }
     }
@@ -271,13 +276,7 @@ class DriverInformationViewModel(
                     it.equals("SELF", ignoreCase = true)
                 }
             } ?: return null
-        val paymentIntervalCode =
-            when (paymentInterval) {
-                "Jährlich" -> "JAEHRLICH"
-                "Halbjährlich" -> "HALBJAEHRLICH"
-                "Monatlich" -> "MONATLICH"
-                else -> return null
-            }
+        val paymentIntervalCode = paymentInterval?.apiCode ?: return null
         val selectedHolderType =
             selectedConfiguration.halterTyp.firstOrNull {
                 if (isMainDriverSelf == true) {
@@ -520,6 +519,7 @@ class DriverInformationViewModel(
 
 data class DriverInformationUiState(
     val car: Car? = null,
+    val vehicleModelError: NetworkError? = null,
     val offerConfiguration: OfferConfiguration? = null,
     val offerConfigurationError: NetworkError? = null,
     val isLeased: Boolean? = null,
@@ -547,8 +547,14 @@ data class DriverInformationUiState(
     val damageFault: String? = null,
     val damageSum: String = "",
     val insuranceStartDate: String = "",
-    val paymentInterval: String? = null,
+    val paymentInterval: PaymentInterval? = null,
     val isRecommendationLoading: Boolean = false,
     val recommendationError: NetworkError? = null,
     val hasRecommendationInputError: Boolean = false,
 )
+
+enum class PaymentInterval(val apiCode: String) {
+    ANNUAL("JAEHRLICH"),
+    SEMIANNUAL("HALBJAEHRLICH"),
+    MONTHLY("MONATLICH"),
+}

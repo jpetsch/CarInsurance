@@ -34,7 +34,7 @@ fun SearchDropdown(
 ) {
     var expanded by remember { mutableStateOf(carGroups.isNotEmpty()) }
 
-    LaunchedEffect(searchTerm, carGroups) {
+    LaunchedEffect(carGroups) {
         expanded = carGroups.isNotEmpty()
     }
 

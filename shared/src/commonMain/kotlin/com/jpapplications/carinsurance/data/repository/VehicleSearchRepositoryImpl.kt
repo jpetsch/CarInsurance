@@ -1,7 +1,7 @@
 package com.jpapplications.carinsurance.data.repository
 
 import com.jpapplications.carinsurance.data.datasource.CarInsuranceService
-import com.jpapplications.carinsurance.data.model.CarSearchDto
+import com.jpapplications.carinsurance.data.model.CarDto
 import com.jpapplications.carinsurance.data.model.CarSearchRequestDto
 import com.jpapplications.carinsurance.domain.model.Car
 import com.jpapplications.carinsurance.domain.model.CarSearchCriteria
@@ -28,7 +28,7 @@ class CarSearchRepositoryImpl(
 
             CarSearchResult.Success(
                 service.vehicleSearch(request).mapValues { (_, cars) ->
-                    cars.map(CarSearchDto::toDomain)
+                    cars.map(CarDto::toDomain)
                 },
             )
         } catch (exception: CancellationException) {
@@ -41,17 +41,17 @@ class CarSearchRepositoryImpl(
                     CarSearchError.REQUEST_REJECTED
                 }
             CarSearchResult.Failure(error)
-        } catch (exception: SerializationException) {
+        } catch (_: SerializationException) {
             CarSearchResult.Failure(CarSearchError.INVALID_RESPONSE)
-        } catch (exception: NoTransformationFoundException) {
+        } catch (_: NoTransformationFoundException) {
             CarSearchResult.Failure(CarSearchError.INVALID_RESPONSE)
-        } catch (exception: IOException) {
+        } catch (_: IOException) {
             CarSearchResult.Failure(CarSearchError.NETWORK)
         }
     }
 }
 
-private fun CarSearchDto.toDomain() =
+private fun CarDto.toDomain() =
     Car(
         matriculationDate = matriculationDate,
         constructionStartYear = constructionStartYear,

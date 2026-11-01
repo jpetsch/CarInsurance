@@ -1,6 +1,6 @@
 package com.jpapplications.carinsurance.data.datasource
 
-import com.jpapplications.carinsurance.data.model.CarSearchDto
+import com.jpapplications.carinsurance.data.model.CarDto
 import com.jpapplications.carinsurance.data.model.CarSearchRequestDto
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
@@ -13,7 +13,7 @@ class CarInsuranceService(
 ) {
     private val baseUrl = "https://app.int.smile-insurances.ch"
 
-    suspend fun vehicleSearch(request: CarSearchRequestDto): Map<String, List<CarSearchDto>> =
+    suspend fun vehicleSearch(request: CarSearchRequestDto): Map<String, List<CarDto>> =
         httpClient.get {
             url("$baseUrl/api/v1/car/vehicle/search/fulltext")
             parameter("vehicle-type", request.vehicleType)

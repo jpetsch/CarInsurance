@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 
 class CarSearchViewModel(
     private val searchCarsUseCase: SearchCarsUseCase,
@@ -79,7 +80,7 @@ class CarSearchViewModel(
 
         val year = uiState.value.year.toIntOrNull()
         searchJob = viewModelScope.launch {
-            delay(SEARCH_DEBOUNCE_MILLIS)
+            delay(SEARCH_DEBOUNCE_MILLIS.milliseconds)
 
             val result = searchCarsUseCase(
                 criteria =

@@ -43,7 +43,6 @@ fun CarSearchScreen(
         OutlinedTextField(
             value = uiState.year,
             onValueChange = { value ->
-                // TODO Big numbers cause a NumberFormatException. Set a max.
                 if (value.any { !it.isDigit() }) {
                     return@OutlinedTextField
                 }

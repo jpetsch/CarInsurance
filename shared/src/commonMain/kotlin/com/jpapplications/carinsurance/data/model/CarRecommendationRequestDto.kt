@@ -1,6 +1,7 @@
 package com.jpapplications.carinsurance.data.model
 
 import kotlinx.serialization.EncodeDefault
+import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -65,7 +66,9 @@ internal data class RecommendationCityDto(
 @Serializable
 internal data class RecommendationClaimDto(
     val schadensfallTyp: String,
+    @SerialName("jahr")
     val schadenfallYear: Int,
     val schadensfallSchuld: String,
+    @SerialName("schadensfallBetrag")
     val summe: Double,
 )

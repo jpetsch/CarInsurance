@@ -49,10 +49,11 @@ Zuletzt wurden **51 gemeinsame Android-Tests** auf einem Emulator mit API 37 erf
 
 ## Offene Punkte und nächste Schritte
 
+- Deutsche Variablen der KI Entfernen. An der API mit @SerialName arbeiten um eigene Variablen wählen zu können.
 - Verhalten in Fehlerfällen weiter Analyiseren und den Code ggfs härten
 - Deckungen anpassen und die Empfehlung neu berechnen
 - Offerte Erstellen
-- Prüfuug auf Barrierefreiheit
+- Prüfung auf Barrierefreiheit
 
 ## AI-Einsatz
 
